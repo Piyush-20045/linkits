@@ -1,6 +1,20 @@
 @import "tailwindcss";
 @import "tw-animate-css";
 
+@layer utilities {
+  .font-geist-sans {
+    font-family: var(--font-geist-sans, system-ui);
+  }
+
+  .font-instrument {
+    font-family: var(--font-instrument-serif, serif);
+  }
+
+  .font-geist-mono {
+    font-family: var(--font-geist-mono, system-ui);
+  }
+}
+
 @custom-variant dark (&:is(.dark *));
 
 @theme inline {
@@ -119,6 +133,7 @@
   * {
     @apply border-border outline-ring/50;
   }
+
   body {
     @apply bg-background text-foreground;
   }

@@ -18,8 +18,8 @@ const Navbar = () => {
         <div className="flex items-center gap-8">
           {/* Logo */}
           <Link href="/" className="flex items-center gap-2">
-            <span className="font-geist-mono text-2xl text-white tracking-tight">
-              linkits
+            <span className="font-geist-mono text-2xl font-medium text-white tracking-tight">
+              link<span className="text-neutral-400">its</span>
             </span>
           </Link>
 

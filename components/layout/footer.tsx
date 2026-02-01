@@ -14,7 +14,7 @@ const Footer = () => {
           </div>
 
           {/* Footer Links */}
-          <div className="md:pr-4 lg:pr-14 flex gap-8 text-sm text-neutral-400">
+          <div className="md:pr-4 lg:pr-14 flex gap-8 text-sm text-neutral-500 dark:text-neutral-400">
             {FOOTER_LINKS.map((link) => (
               <a
                 key={link.id}
@@ -33,7 +33,7 @@ const Footer = () => {
                 key={social.id}
                 target="_blank"
                 href={social.href}
-                className="flex items-center gap-1.5 text-neutral-400 hover:text-neutral-900 dark:hover:text-neutral-100 transition-colors cursor-pointer font-geist-mono"
+                className="flex items-center gap-1.5 text-neutral-500 dark:text-neutral-400 hover:text-neutral-900 dark:hover:text-neutral-100 transition-colors cursor-pointer font-geist-mono"
               >
                 {social.icon}
                 {social.name}

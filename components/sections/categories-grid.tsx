@@ -3,10 +3,10 @@ import Link from "next/link";
 
 const CategoriesGrid = () => {
   return (
-    <section className="bg-gray-50 py-20 dark:bg-black">
+    <section className="bg-gray-50 py-20 dark:bg-neutral-950">
       <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
         <div className="mb-12 text-center">
-          <h2 className="text-4xl font-semibold mb-4 text-gray-900 dark:text-white">
+          <h2 className="text-3xl font-semibold mb-6 text-gray-900 dark:text-white">
             Everything you need
           </h2>
           <p className="text-gray-500 dark:text-gray-400">
@@ -17,7 +17,7 @@ const CategoriesGrid = () => {
         <div className="grid grid-cols-1 gap-6 md:grid-cols-3">
           <Link
             href="/directory?category=jobs"
-            className="group block space-y-3 rounded-2xl bg-white p-8 shadow-sm transition-shadow hover:shadow-md border border-gray-100 dark:bg-gray-800 dark:border-gray-700"
+            className="group block space-y-3 rounded-2xl bg-white p-8 shadow-sm transition-shadow hover:shadow-md border border-gray-100 dark:bg-black dark:border-gray-500"
           >
             <div className="flex h-12 w-12 items-center justify-center rounded-lg bg-black text-white dark:bg-white dark:text-black">
               <BriefcaseBusiness />
@@ -32,7 +32,7 @@ const CategoriesGrid = () => {
 
           <Link
             href="/directory?category=ai"
-            className="group block space-y-3 rounded-2xl bg-white p-8 shadow-sm transition-shadow hover:shadow-md border border-gray-100 dark:bg-gray-800 dark:border-gray-700"
+            className="group block space-y-3 rounded-2xl bg-white p-8 shadow-sm transition-shadow hover:shadow-md border border-gray-100 dark:bg-black dark:border-gray-500"
           >
             <div className="flex h-12 w-12 items-center justify-center rounded-lg bg-black text-white dark:bg-white dark:text-black">
               <BotMessageSquare />
@@ -47,7 +47,7 @@ const CategoriesGrid = () => {
 
           <Link
             href="/directory?category=learning"
-            className="group block space-y-3 rounded-2xl bg-white p-8 shadow-sm transition-shadow hover:shadow-md border border-gray-100 dark:bg-gray-800 dark:border-gray-700"
+            className="group block space-y-3 rounded-2xl bg-white p-8 shadow-sm transition-shadow hover:shadow-md border border-gray-100 dark:bg-black dark:border-gray-500"
           >
             <div className="flex h-12 w-12 items-center justify-center rounded-lg bg-black text-white dark:bg-white dark:text-black">
               <Book />

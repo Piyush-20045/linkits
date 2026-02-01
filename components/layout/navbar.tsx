@@ -5,6 +5,7 @@ import { Button } from "../ui/button";
 import { ChevronDown, Menu, Search, X } from "lucide-react";
 import { usePathname } from "next/navigation";
 import { CATEGORIES } from "@/constants/categories";
+import { ToggleButton } from "../ui/toggle-button";
 
 const Navbar = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
@@ -36,7 +37,7 @@ const Navbar = () => {
                 Categories
                 <ChevronDown size={18} className=" opacity-50" />
               </button>
-              <div className="absolute left-0 top-full mt-2 w-48 origin-top-left rounded-md border border-gray-400/80 bg-black opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200">
+              <div className="absolute left-0 top-full mt-2 w-48 origin-top-left rounded-md border border-gray-500/80 bg-black opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200">
                 {CATEGORIES.map((cat) => (
                   <Link
                     key={cat.value}
@@ -64,6 +65,9 @@ const Navbar = () => {
               className="h-9 w-48 rounded-full pl-9 pr-4 text-sm outline-none cursor-pointer border border-neutral-800 bg-neutral-950 hover:bg-black text-white"
             />
           </Link>
+          <div>
+            <ToggleButton />
+          </div>
 
           {/* Login & signup btn */}
           <div className="flex items-center gap-2">

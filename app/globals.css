@@ -1,6 +1,8 @@
 @import "tailwindcss";
 @import "tw-animate-css";
 
+@custom-variant dark (&:is(.dark *));
+
 @layer utilities {
   .font-geist-sans {
     font-family: var(--font-geist-sans, system-ui);
@@ -15,7 +17,6 @@
   }
 }
 
-@custom-variant dark (&:is(.dark *));
 
 @theme inline {
   --color-background: var(--background);

@@ -5,7 +5,7 @@ import CategoriesGrid from "@/components/sections/categories-grid";
 
 export default function Home() {
   return (
-    <div>
+    <div className="bg-white dark:bg-black">
       <Navbar />
       <Hero />
       <CategoriesGrid />

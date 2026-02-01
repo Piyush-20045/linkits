@@ -2,6 +2,7 @@ import Hero from "@/components/sections/hero";
 import Navbar from "@/components/layout/navbar";
 import Footer from "@/components/layout/footer";
 import CategoriesGrid from "@/components/sections/categories-grid";
+import Cta from "@/components/sections/cta";
 
 export default function Home() {
   return (
@@ -9,6 +10,7 @@ export default function Home() {
       <Navbar />
       <Hero />
       <CategoriesGrid />
+      <Cta />
       <Footer />
     </div>
   );

@@ -6,8 +6,8 @@ const Footer = () => {
       <div className="mx-auto max-w-7xl px-4 py-4 sm:px-6 lg:px-8">
         <div className="flex flex-col items-center justify-between gap-6 md:flex-row">
           {/* Title and Slogan */}
-          <div className="flex flex-col items-center md:items-start gap-0.5 text-white">
-            <span className="font-geist-mono text-xl font-semibold">
+          <div className="flex flex-col items-center md:items-start gap-0.5 text-gray-800 dark:text-white">
+            <span className="font-geist-mono text-xl font-semibold tracking-tight">
               link<span className="text-neutral-400">its</span>
             </span>
             <span>All your essential web tools, in one place.</span>
@@ -19,7 +19,7 @@ const Footer = () => {
               <a
                 key={link.id}
                 href="#"
-                className="hover:text-neutral-100 transition-colors cursor-pointer font-geist-mono"
+                className="hover:text-neutral-900 dark:hover:text-neutral-100 transition-colors cursor-pointer font-geist-mono"
               >
                 {link.name}
               </a>
@@ -33,7 +33,7 @@ const Footer = () => {
                 key={social.id}
                 target="_blank"
                 href={social.href}
-                className="flex items-center gap-1.5 text-neutral-400 hover:text-neutral-100 transition-colors cursor-pointer font-geist-mono"
+                className="flex items-center gap-1.5 text-neutral-400 hover:text-neutral-900 dark:hover:text-neutral-100 transition-colors cursor-pointer font-geist-mono"
               >
                 {social.icon}
                 {social.name}

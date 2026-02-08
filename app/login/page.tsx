@@ -1,20 +1,9 @@
 "use client";
 import ParticlesBackground from "@/components/ui/ParticlesBackground";
-import { signIn, useSession } from "next-auth/react";
+import { signIn } from "next-auth/react";
 import { Button } from "@/components/ui/button";
-import { useRouter } from "next/navigation";
-import { useEffect } from "react";
 
 const Login = () => {
-  const router = useRouter();
-  const { data: session, status } = useSession();
-  console.log(session);
-
-  //   if (isLoading) return null;
-  useEffect(() => {
-    if (status === "authenticated") return router.push("/");
-  }, [status]);
-
   return (
     <div className="min-h-screen flex flex-col items-center justify-center px-4 sm:px-6 lg:px-8 bg-white dark:bg-black">
       <ParticlesBackground />
@@ -32,7 +21,7 @@ const Login = () => {
 
       {/* Btn */}
       <Button
-        onClick={() => signIn("google", { callbackUrl: "/" })}
+        onClick={() => signIn("google")}
         size="lg"
         className="mt-8 gap-3 rounded cursor-pointer z-50"
       >

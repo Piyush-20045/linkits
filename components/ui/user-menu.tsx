@@ -19,7 +19,7 @@ export function UserMenu() {
         <Button variant="ghost" size="icon" className="rounded-full">
           <Avatar>
             <AvatarImage src={data?.user.image || ""} alt="user-image" />
-            <AvatarFallback>LR</AvatarFallback>
+            <AvatarFallback>UN</AvatarFallback>
           </Avatar>
         </Button>
       </DropdownMenuTrigger>

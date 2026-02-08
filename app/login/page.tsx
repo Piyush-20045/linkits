@@ -32,9 +32,7 @@ const Login = () => {
 
       {/* Btn */}
       <Button
-        onClick={() =>
-          signIn("google", { callbackUrl: "/api/auth/callback/google" })
-        }
+        onClick={() => signIn("google", { callbackUrl: "/" })}
         size="lg"
         className="mt-8 gap-3 rounded cursor-pointer z-50"
       >

@@ -7,11 +7,14 @@ import { usePathname } from "next/navigation";
 import { CATEGORIES } from "@/constants/categories";
 import { ToggleButton } from "../ui/toggle-button";
 import { Input } from "../ui/input";
+import { useSession } from "next-auth/react";
+import { UserMenu } from "../ui/user-menu";
 
 const Navbar = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const pathname = usePathname();
   const isActive = pathname === "directive";
+  const { data: session, status } = useSession();
 
   return (
     <nav className="sticky top-0 z-50 w-full border-b border-neutral-600 dark:bg-black/95 backdrop-blur-md">
@@ -71,22 +74,17 @@ const Navbar = () => {
             <ToggleButton />
           </div>
 
-          {/* Login & signup btn */}
+          {/* Login || user profile */}
           <div className="flex items-center gap-2">
-            <Link href="/login">
-              <Button
-                variant="secondary"
-                size="sm"
-                className="hidden sm:inline-flex hover:bg-gray-200 dark:hover:bg-neutral-900"
-              >
-                Log in
-              </Button>
-            </Link>
-            <Link href="/login">
-              <Button size="sm" className="border border-white">
-                Sign up
-              </Button>
-            </Link>
+            {status === "loading" ? null : status === "authenticated" ? (
+              <UserMenu />
+            ) : (
+              <Link href="/login">
+                <Button size="sm" className="border border-white">
+                  Login
+                </Button>
+              </Link>
+            )}
           </div>
 
           {/* Mobile menu button */}

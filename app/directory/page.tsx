@@ -2,65 +2,102 @@
 import Navbar from "@/components/layout/navbar";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { useSearchParams } from "next/navigation";
-import { useState } from "react";
+import { normalizeCategoryValue } from "@/constants/categories";
+import { usePathname, useRouter, useSearchParams } from "next/navigation";
+import { useEffect, useMemo, useState } from "react";
+import { Tool } from "@/types/tool";
+import ToolCard from "@/components/ui/toolcard";
+import Categories from "./_components/categories";
 
-export const CATEGORIES = [
-  { label: "Jobs & Career", value: "jobs", description: "Find your next role" },
-  {
-    label: "Interview Prep",
-    value: "interview",
-    description: "Ace the technical interview",
-  },
-  {
-    label: "AI Tools",
-    value: "ai",
-    description: "Leverage AI in your workflow",
-  },
-  {
-    label: "Learning",
-    value: "learning",
-    description: "Courses and tutorials",
-  },
-  {
-    label: "Dev Utilities",
-    value: "utilities",
-    description: "Helpers and converters",
-  },
-  {
-    label: "UI / Frontend",
-    value: "ui",
-    description: "Design inspiration and libraries",
-  },
-];
+export default function Directory() {
+  const [tools, setTools] = useState<Tool[]>([]);
+  const [loading, setLoading] = useState(true);
+  const router = useRouter();
+  const pathname = usePathname();
+  const searchParams = useSearchParams();
 
-const Directory = () => {
-  const [searchParams, setSearchParams] = useSearchParams();
-  const [tools, setTools] = useState([]);
-
-  // Filters state
+  // Filters
   const [search, setSearch] = useState("");
-  const [selectedCategory, setSelectedCategory] = useState("category");
-  const [selectedPricing, setSelectedPricing] = useState("all");
+  const [selectedCategory, setSelectedCategory] = useState("all");
+
+  useEffect(() => {
+    const categoryFromQuery = searchParams.get("category");
+    setSelectedCategory(normalizeCategoryValue(categoryFromQuery));
+  }, [searchParams]);
+
+  // Fetch tools
+  useEffect(() => {
+    async function fetchTools() {
+      try {
+        const res = await fetch("/api/tools");
+        const data = await res.json();
+        setTools(data);
+      } catch (error) {
+        console.error("Failed to fetch tools", error);
+      } finally {
+        setLoading(false);
+      }
+    }
+
+    fetchTools();
+  }, []);
+
+  // Filter logic
+  const filteredTools = useMemo(() => {
+    return tools.filter((tool) => {
+      const matchesSearch =
+        tool.title.toLowerCase().includes(search.toLowerCase()) ||
+        tool.description.toLowerCase().includes(search.toLowerCase()) ||
+        tool.tags.some((tag) =>
+          tag.toLowerCase().includes(search.toLowerCase()),
+        );
+
+      const matchesCategory =
+        selectedCategory === "all" ||
+        normalizeCategoryValue(tool.category) === selectedCategory;
+
+      return matchesSearch && matchesCategory;
+    });
+  }, [tools, search, selectedCategory]);
+
+  function handleCategoryChange(category: string) {
+    setSelectedCategory(category);
+
+    const nextSearchParams = new URLSearchParams(searchParams.toString());
+
+    if (category === "all") {
+      nextSearchParams.delete("category");
+    } else {
+      nextSearchParams.set("category", category);
+    }
+
+    const queryString = nextSearchParams.toString();
+    router.replace(queryString ? `${pathname}?${queryString}` : pathname, {
+      scroll: false,
+    });
+  }
 
   return (
     <div className="min-h-screen bg-white dark:bg-black">
       <Navbar />
+
       <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-        <div className="my-8">
-          <h1 className="text-4xl mb-4 text-gray-900 dark:text-white">
+        {/* Header */}
+        <div className="my-10">
+          <h1 className="text-4xl mb-2 text-gray-900 dark:text-white">
             Directory
           </h1>
           <p className="text-gray-500 dark:text-gray-400">
-            Explore our complete collection of developer resources.
+            Explore curated developer resources.
           </p>
         </div>
 
         <div className="flex flex-col lg:flex-row gap-8">
-          {/* Sidebar Filters */}
-          <aside className="w-full lg:w-64 space-y-8 shrink-0">
+          {/* Sidebar */}
+          <aside className="w-full lg:w-64 shrink-0 space-y-8">
+            {/* Search */}
             <div>
-              <h3 className="font-semibold mb-4 text-sm uppercase tracking-wide text-gray-500 dark:text-gray-400">
+              <h3 className="mb-3 text-sm font-semibold uppercase text-gray-500 dark:text-gray-400">
                 Search
               </h3>
               <Input
@@ -70,33 +107,52 @@ const Directory = () => {
               />
             </div>
 
-            <div>
-              <h3 className="font-semibold mb-4 text-sm uppercase tracking-wide text-gray-500 dark:text-gray-400">
-                Categories
-              </h3>
-              <div className="space-y-2">
-                <button
-                  onClick={() => setSelectedCategory("all")}
-                  className={`block w-full text-left text-sm py-1.5 px-3 rounded-md transition-colors ${selectedCategory === "all" ? "bg-black text-white dark:bg-white dark:text-black" : "text-gray-600 hover:bg-gray-100 dark:text-gray-400 dark:hover:bg-gray-800"}`}
-                >
-                  All Categories
-                </button>
-                {CATEGORIES.map((cat) => (
-                  <button
-                    key={cat.value}
-                    onClick={() => setSelectedCategory(cat.value)}
-                    className={`block w-full text-left text-sm py-1.5 px-3 rounded-md transition-colors ${selectedCategory === cat.value ? "bg-black text-white dark:bg-white dark:text-black" : "text-gray-600 hover:bg-gray-100 dark:text-gray-400 dark:hover:bg-gray-800"}`}
-                  >
-                    {cat.label}
-                  </button>
-                ))}
-              </div>
-            </div>
+            {/* Categories */}
+            <Categories
+              selectedCategory={selectedCategory}
+              onCategoryChange={handleCategoryChange}
+            />
           </aside>
+
+          {/* Results */}
+          <main className="flex-1">
+            {loading ? (
+              <p className="text-gray-500">Loading tools...</p>
+            ) : (
+              <>
+                <div className="mb-4 text-sm text-gray-500 dark:text-gray-400">
+                  Showing {filteredTools.length} results
+                </div>
+
+                {filteredTools.length > 0 ? (
+                  <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3">
+                    {filteredTools.map((tool) => (
+                      <ToolCard key={tool._id} tool={tool} />
+                    ))}
+                  </div>
+                ) : (
+                  <div className="rounded-xl border border-dashed border-gray-300 bg-gray-50 py-20 text-center dark:border-gray-700 dark:bg-neutral-900">
+                    <h3 className="mb-2 font-serif text-xl text-gray-900 dark:text-white">
+                      No tools found
+                    </h3>
+                    <p className="mb-4 text-gray-500 dark:text-gray-400">
+                      Try adjusting your search or filters.
+                    </p>
+                    <Button
+                      onClick={() => {
+                        setSearch("");
+                        handleCategoryChange("all");
+                      }}
+                    >
+                      Clear Filters
+                    </Button>
+                  </div>
+                )}
+              </>
+            )}
+          </main>
         </div>
       </div>
     </div>
   );
-};
-
-export default Directory;
+}

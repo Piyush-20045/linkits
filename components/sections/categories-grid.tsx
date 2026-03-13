@@ -46,7 +46,7 @@ const CategoriesGrid = () => {
           </Link>
 
           <Link
-            href="/directory?category=learning"
+            href="/directory?category=courses"
             className="group block space-y-3 rounded-2xl bg-white p-8 shadow-sm transition-shadow hover:shadow-md border border-gray-100 dark:bg-black dark:border-gray-500"
           >
             <div className="flex h-12 w-12 items-center justify-center rounded-lg bg-black text-white dark:bg-white dark:text-black">

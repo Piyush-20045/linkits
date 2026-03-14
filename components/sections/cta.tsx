@@ -3,7 +3,7 @@ import { Button } from "../ui/button";
 
 const Cta = () => {
   return (
-    <section className="mx-auto max-w-4xl pt-20 pb-32 px-4 sm:px-6 lg:px-8 text-center">
+    <section className="mx-auto max-w-4xl pt-24 pb-32 px-4 sm:px-6 lg:px-8 text-center">
       <h2 className="text-3xl font-semibold mb-6 text-gray-900 dark:text-white">
         Join the community
       </h2>

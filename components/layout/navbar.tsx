@@ -58,21 +58,7 @@ const Navbar = () => {
 
         {/* Right Side */}
         <div className="flex items-center gap-4">
-          {/* Search */}
-          <Link href="/" className="hidden sm:block relative">
-            <Search
-              size={16}
-              className="absolute left-2.5 top-1/2 -translate-y-1/2 text-gray-400"
-            />
-            <Input
-              type="search"
-              placeholder="Search..."
-              className="pl-8 rounded-full"
-            />
-          </Link>
-          <div>
-            <ToggleButton />
-          </div>
+          <ToggleButton />
 
           {/* Login || user profile */}
           <div className="flex items-center gap-2">

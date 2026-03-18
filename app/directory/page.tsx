@@ -29,7 +29,9 @@ export default function Directory() {
   useEffect(() => {
     async function fetchTools() {
       try {
-        const res = await fetch("/api/tools");
+        const res = await fetch("/api/tools", {
+          cache: "force-cache",
+        });
         const data = await res.json();
         setTools(data);
       } catch (error) {
@@ -82,19 +84,19 @@ export default function Directory() {
       <Navbar />
 
       <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-        {/* Header */}
-        <div className="my-10">
-          <h1 className="text-4xl mb-2 text-gray-900 dark:text-white">
-            Directory
-          </h1>
-          <p className="text-gray-500 dark:text-gray-400">
-            Explore curated developer resources.
-          </p>
-        </div>
-
         <div className="flex flex-col lg:flex-row gap-8">
           {/* Sidebar */}
           <aside className="w-full lg:w-64 shrink-0 space-y-8">
+            {/* Header */}
+            <div className="my-10">
+              <h1 className="text-4xl mb-2 text-gray-900 dark:text-white">
+                Directory
+              </h1>
+              <p className="text-gray-500 dark:text-gray-400">
+                Explore curated developer resources.
+              </p>
+            </div>
+
             {/* Search */}
             <div>
               <h3 className="mb-3 text-sm font-semibold uppercase text-gray-500 dark:text-gray-400">
@@ -115,7 +117,7 @@ export default function Directory() {
           </aside>
 
           {/* Results */}
-          <main className="flex-1">
+          <main className="my-12 flex-1">
             {loading ? (
               <p className="text-gray-500">Loading tools...</p>
             ) : (

@@ -2,6 +2,7 @@
 import { Button } from "@/components/ui/button";
 import { getCategoryLabel } from "@/constants/categories";
 import { Tool } from "@/types/tool";
+import Image from "next/image";
 
 interface ToolCardProps {
   tool: Tool;
@@ -10,12 +11,33 @@ interface ToolCardProps {
 export default function ToolCard({ tool }: ToolCardProps) {
   const categoryLabel = getCategoryLabel(tool.category);
 
+  const getHostname = (url: string) => {
+    try {
+      const cleanUrl = url.startsWith("http") ? url : `https://${url}`;
+      return new URL(cleanUrl).hostname;
+    } catch {
+      return "";
+    }
+  };
+
+  const hostname = getHostname(tool.url);
+
   return (
-    <div className="group relative flex flex-col rounded-xl border border-gray-200 bg-gray-50 p-5 transition-all hover:border-gray-300 hover:shadow-sm dark:border-gray-800 dark:bg-neutral-900 dark:hover:border-gray-700 hover:scale-105">
+    <div className="group relative flex flex-col rounded-md border border-gray-200 bg-gray-50 p-5 transition-all hover:border-gray-300 hover:shadow-sm dark:border-gray-800 dark:bg-neutral-900 dark:hover:border-gray-700 hover:scale-105">
       {/* Header */}
       <div className="mb-3 flex items-start gap-3">
-        <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-lg border border-gray-100 bg-gray-50 font-serif text-lg font-bold text-gray-900 dark:border-gray-700 dark:bg-gray-800 dark:text-gray-100">
-          {tool.title.charAt(0)}
+        <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-md border border-gray-100 bg-gray-50 font-serif text-lg font-bold text-gray-900 dark:border-gray-700 dark:bg-neutral-900 dark:text-gray-100">
+          {hostname ? (
+            <Image
+              src={`https://img.logo.dev/${hostname}?token=${process.env.NEXT_PUBLIC_LOGO_DEV_KEY}`}
+              alt={tool.title}
+              width={38}
+              height={38}
+              className="object-contain rounded-md"
+            />
+          ) : (
+            <span>{tool.title.charAt(0)}</span>
+          )}
         </div>
 
         <div>
@@ -39,7 +61,7 @@ export default function ToolCard({ tool }: ToolCardProps) {
           {tool.tags.slice(0, 3).map((tag) => (
             <span
               key={tag}
-              className="rounded-md border border-gray-100 bg-gray-50 px-2 py-1 text-[10px] text-gray-500 dark:border-gray-700 dark:bg-neutral-900 dark:text-gray-400"
+              className="rounded-sm border border-gray-300 bg-gray-100 px-2 py-1 text-[10px] text-gray-500 dark:border-gray-700 dark:bg-neutral-900 dark:text-gray-400"
             >
               {tag}
             </span>

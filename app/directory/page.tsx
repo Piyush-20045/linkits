@@ -8,6 +8,8 @@ import { useEffect, useMemo, useState } from "react";
 import { Tool } from "@/types/tool";
 import ToolCard from "@/components/ui/toolcard";
 import Categories from "./_components/categories";
+import { ShineBorder } from "@/components/ui/shine-border";
+import { useTheme } from "next-themes";
 
 export default function Directory() {
   const [tools, setTools] = useState<Tool[]>([]);
@@ -15,6 +17,7 @@ export default function Directory() {
   const router = useRouter();
   const pathname = usePathname();
   const searchParams = useSearchParams();
+  const theme = useTheme()
 
   // Filters
   const [search, setSearch] = useState("");
@@ -86,7 +89,7 @@ export default function Directory() {
       <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
         <div className="flex flex-col lg:flex-row gap-8">
           {/* Sidebar */}
-          <aside className="w-full lg:w-64 shrink-0 space-y-8">
+          <aside className="w-full lg:w-64 shrink-0 space-y-8 lg:sticky lg:top-16 lg:self-start lg:max-h-[calc(100vh-6rem)] lg:overflow-y-auto">
             {/* Header */}
             <div className="my-10">
               <h1 className="text-4xl mb-2 text-gray-900 dark:text-white">
@@ -102,11 +105,14 @@ export default function Directory() {
               <h3 className="mb-3 text-sm font-semibold uppercase text-gray-500 dark:text-gray-400">
                 Search
               </h3>
+              <div className="relative overflow-hidden">
+              <ShineBorder shineColor={theme.theme === "dark" ? "white" : "black"} />
               <Input
                 placeholder="Search tools..."
                 value={search}
                 onChange={(e) => setSearch(e.target.value)}
               />
+              </div>
             </div>
 
             {/* Categories */}

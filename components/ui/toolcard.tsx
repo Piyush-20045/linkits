@@ -2,7 +2,9 @@
 import { Button } from "@/components/ui/button";
 import { getCategoryLabel } from "@/constants/categories";
 import { Tool } from "@/types/tool";
+import { signIn, useSession } from "next-auth/react";
 import Image from "next/image";
+import { useState } from "react";
 
 interface ToolCardProps {
   tool: Tool;
@@ -10,6 +12,8 @@ interface ToolCardProps {
 
 export default function ToolCard({ tool }: ToolCardProps) {
   const categoryLabel = getCategoryLabel(tool.category);
+  const { data: session } = useSession();
+  const [isSaved, setIsSaved] = useState(false);
 
   const getHostname = (url: string) => {
     try {
@@ -19,8 +23,31 @@ export default function ToolCard({ tool }: ToolCardProps) {
       return "";
     }
   };
-
   const hostname = getHostname(tool.url);
+
+  const handleSave = async () => {
+    if (!session) {
+      return signIn("google");
+    }
+
+    // Optimistic update
+    setIsSaved((prev) => !prev);
+
+    try {
+      const res = await fetch("/api/bookmark", {
+        method: "POST",
+        body: JSON.stringify({ toolId: tool._id }),
+      });
+
+      const data = await res.json();
+
+      console.log(data);
+
+      setIsSaved(data.saved);
+    } catch (err) {
+      setIsSaved((prev) => !prev); //rollback
+    }
+  };
 
   return (
     <div className="group relative flex flex-col rounded-md border border-gray-200 bg-gray-50 p-5 transition-all hover:border-gray-300 hover:shadow-sm dark:border-gray-800 dark:bg-neutral-900 dark:hover:border-gray-700 hover:scale-105">
@@ -80,6 +107,12 @@ export default function ToolCard({ tool }: ToolCardProps) {
             Visit Site
           </Button>
         </a>
+        <button
+          onClick={handleSave}
+          className="border px-2 py-1 rounded text-xs"
+        >
+          {isSaved ? "Saved" : "Save"}
+        </button>
       </div>
     </div>
   );

@@ -10,9 +10,11 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { BadgeCheckIcon, LayoutDashboard, LogOutIcon } from "lucide-react";
 import { signOut, useSession } from "next-auth/react";
+import { useRouter } from "next/navigation";
 
 export function UserMenu() {
   const { data } = useSession();
+  const route = useRouter()
   return (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
@@ -25,7 +27,7 @@ export function UserMenu() {
       </DropdownMenuTrigger>
       <DropdownMenuContent align="end">
         <DropdownMenuGroup>
-          <DropdownMenuItem>
+          <DropdownMenuItem onClick={() => route.push("/dashboard")}>
             <LayoutDashboard />
             Dashboard
           </DropdownMenuItem>

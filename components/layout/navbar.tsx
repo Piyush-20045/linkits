@@ -2,11 +2,10 @@
 import Link from "next/link";
 import { useState } from "react";
 import { Button } from "../ui/button";
-import { ChevronDown, Menu, Search, X } from "lucide-react";
+import { ChevronDown, Menu, X } from "lucide-react";
 import { usePathname } from "next/navigation";
 import { CATEGORIES } from "@/constants/categories";
 import { ToggleButton } from "../ui/toggle-button";
-import { Input } from "../ui/input";
 import { useSession } from "next-auth/react";
 import { UserMenu } from "../ui/user-menu";
 

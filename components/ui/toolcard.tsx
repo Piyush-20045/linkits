@@ -2,6 +2,7 @@
 import { Button } from "@/components/ui/button";
 import { getCategoryLabel } from "@/constants/categories";
 import { Tool } from "@/types/tool";
+import { Bookmark, BookmarkCheck } from "lucide-react";
 import { signIn, useSession } from "next-auth/react";
 import Image from "next/image";
 import { useState } from "react";
@@ -97,8 +98,8 @@ export default function ToolCard({ tool }: ToolCardProps) {
       )}
 
       {/* Action */}
-      <div className="mt-auto pt-2">
-        <a href={tool.url} target="_blank" rel="noopener noreferrer">
+      <div className="flex mt-auto pt-2">
+        <a href={tool.url} target="_blank" rel="noopener noreferrer" className="flex-1">
           <Button
             variant="secondary"
             size="sm"
@@ -109,9 +110,17 @@ export default function ToolCard({ tool }: ToolCardProps) {
         </a>
         <button
           onClick={handleSave}
-          className="border px-2 py-1 rounded text-xs"
+          className="px-2 py-1 text-xs cursor-pointer rounded-full hover:shadow"
         >
-          {isSaved ? "Saved" : "Save"}
+          {isSaved ? (
+             <span>
+              <BookmarkCheck />
+            </span>
+          ) : (
+            <span>
+              <Bookmark />
+            </span>
+          )}
         </button>
       </div>
     </div>

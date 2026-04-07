@@ -33,7 +33,7 @@ export default function Directory() {
     async function fetchTools() {
       try {
         const res = await fetch("/api/tools", {
-          cache: "force-cache",
+          cache: "no-store",
         });
         const data = await res.json();
         setTools(data);

@@ -5,7 +5,7 @@ import { Tool } from "@/types/tool";
 import { Bookmark, BookmarkCheck } from "lucide-react";
 import { signIn, useSession } from "next-auth/react";
 import Image from "next/image";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 
 interface ToolCardProps {
   tool: Tool;
@@ -14,7 +14,11 @@ interface ToolCardProps {
 export default function ToolCard({ tool }: ToolCardProps) {
   const categoryLabel = getCategoryLabel(tool.category);
   const { data: session } = useSession();
-  const [isSaved, setIsSaved] = useState(false);
+  const [isSaved, setIsSaved] = useState(tool.saved ?? false);
+
+  useEffect(() => {
+    setIsSaved(tool.saved ?? false);
+  }, [tool.saved]);
 
   const getHostname = (url: string) => {
     try {
@@ -98,7 +102,7 @@ export default function ToolCard({ tool }: ToolCardProps) {
       )}
 
       {/* Action */}
-      <div className="flex mt-auto pt-2">
+      <div className="mt-auto flex pt-2">
         <a href={tool.url} target="_blank" rel="noopener noreferrer" className="flex-1">
           <Button
             variant="secondary"
@@ -113,7 +117,7 @@ export default function ToolCard({ tool }: ToolCardProps) {
           className="px-2 py-1 text-xs cursor-pointer rounded-full hover:shadow"
         >
           {isSaved ? (
-             <span>
+            <span>
               <BookmarkCheck />
             </span>
           ) : (

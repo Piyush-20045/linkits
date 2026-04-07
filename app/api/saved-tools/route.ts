@@ -17,7 +17,12 @@ export async function GET() {
 
   const tools = await Tool.find({
     _id: { $in: user?.savedTools || [] },
-  });
+  }).sort({ createdAt: -1 });
 
-  return NextResponse.json(tools);
+  const toolsWithSavedState = tools.map((tool) => ({
+    ...tool.toObject(),
+    saved: true,
+  }));
+
+  return NextResponse.json(toolsWithSavedState);
 }

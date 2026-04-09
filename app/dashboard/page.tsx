@@ -77,11 +77,6 @@ export default function Dashboard() {
         value: categories.size,
         icon: Grid2X2,
       },
-      {
-        label: "Tags tracked",
-        value: tags.size,
-        icon: Tags,
-      },
     ];
   }, [tools]);
 

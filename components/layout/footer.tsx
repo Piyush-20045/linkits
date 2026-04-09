@@ -18,7 +18,7 @@ const Footer = () => {
             {FOOTER_LINKS.map((link) => (
               <a
                 key={link.id}
-                href="#"
+                href={link.href}
                 className="hover:text-neutral-900 dark:hover:text-neutral-100 transition-colors cursor-pointer font-geist-mono"
               >
                 {link.name}

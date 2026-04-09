@@ -23,6 +23,6 @@ export const SOCIALS_LINKS = [
 
 export const FOOTER_LINKS = [
   { id: 1, name: "About", href: "/" },
-  { id: 2, name: "Privacy", href: "/" },
-  { id: 3, name: "Terms", href: "/" },
+  { id: 2, name: "Privacy", href: "/privacy-and-terms" },
+  { id: 3, name: "Terms", href: "/privacy-and-terms" },
 ];

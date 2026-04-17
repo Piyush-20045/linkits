@@ -11,7 +11,7 @@ const Cta = () => {
         Create your personal dashboard and save your favorite tools for quick
         access.
       </p>
-      <Link href="/login">
+      <Link href="/directory">
         <Button size="lg" className="rounded-full px-10">
           Get Started for Free
         </Button>

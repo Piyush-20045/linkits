@@ -6,7 +6,7 @@ const Hero = () => {
   return (
     <section className="pt-20 pb-16 md:pt-32 md:pb-24 relative overflow-hidden">
       <ParticlesBackground />
-      <div className="mx-auto max-w-3xl text-center space-y-6">
+      <div className="mx-auto max-w-3xl text-center space-y-6 relative z-10">
         {/* Heading and paragraph */}
         <h1 className="px-2.5 text-5xl sm:text-6xl md:text-7xl text-gray-700 dark:text-gray-400 leading-tight tracking-tight font-instrument">
           Discover the best tools to{" "}
@@ -19,18 +19,23 @@ const Hero = () => {
         </p>
         {/* Buttons */}
         <div className="flex items-center justify-center gap-4 pt-4">
-          <Link href="/directory">
+          <Link href="/directory" className="w-full sm:w-auto">
             <Button
+              asChild
               variant="secondary"
               size="lg"
-              className="px-8 hover:bg-gray-200 dark:hover:bg-neutral-900"
+              className="w-full px-8 cursor-pointer hover:bg-gray-200 dark:hover:bg-neutral-900 transition-colors"
             >
-              Explore Tools
+              <span>Explore Tools</span>
             </Button>
           </Link>
-          <Link href="/directory?category=ai">
-            <Button size="lg" className="px-8 border border-white">
-              Browse AI
+          <Link href="/directory?category=ai" className="w-full sm:w-auto">
+            <Button
+              asChild
+              size="lg"
+              className="w-full px-8 cursor-pointer"
+            >
+              <span>Browse AI</span>
             </Button>
           </Link>
         </div>

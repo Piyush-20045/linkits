@@ -15,6 +15,7 @@ export default function ToolCard({ tool }: ToolCardProps) {
   const categoryLabel = getCategoryLabel(tool.category);
   const { data: session } = useSession();
   const [isSaved, setIsSaved] = useState(tool.saved ?? false);
+  const [isSavingBookmark, setIsSavingBookmark] = useState(false);
 
   useEffect(() => {
     setIsSaved(tool.saved ?? false);
@@ -31,6 +32,8 @@ export default function ToolCard({ tool }: ToolCardProps) {
   const hostname = getHostname(tool.url);
 
   const handleSave = async () => {
+    if (isSavingBookmark) return;
+
     if (!session) {
       return signIn("google");
     }
@@ -39,6 +42,7 @@ export default function ToolCard({ tool }: ToolCardProps) {
     setIsSaved((prev) => !prev);
 
     try {
+      setIsSavingBookmark(true);
       const res = await fetch("/api/bookmark", {
         method: "POST",
         body: JSON.stringify({ toolId: tool._id }),
@@ -49,8 +53,10 @@ export default function ToolCard({ tool }: ToolCardProps) {
       console.log(data);
 
       setIsSaved(data.saved);
-    } catch (err) {
+    } catch {
       setIsSaved((prev) => !prev); //rollback
+    } finally {
+      setIsSavingBookmark(false);
     }
   };
 
@@ -114,15 +120,28 @@ export default function ToolCard({ tool }: ToolCardProps) {
         </a>
         <button
           onClick={handleSave}
-          className="px-2 py-1 text-xs cursor-pointer rounded-full hover:shadow"
+          type="button"
+          aria-label={isSaved ? "Remove bookmark" : "Save bookmark"}
+          aria-pressed={isSaved}
+          disabled={isSavingBookmark}
+          className={`relative ml-3 inline-flex h-9 w-9 shrink-0 cursor-pointer items-center justify-center overflow-hidden rounded-full border transition-all duration-300 hover:scale-105 active:scale-95 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-amber-400 focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-70 dark:focus-visible:ring-offset-neutral-900 ${
+            isSaved
+              ? "border-amber-300 bg-amber-100 text-amber-600 shadow-sm shadow-amber-200/70 hover:bg-amber-200 hover:text-amber-700 dark:border-amber-500/50 dark:bg-amber-500/5 dark:text-amber-400 dark:shadow-amber-900/30 dark:hover:bg-amber-500/25"
+              : "border-gray-200 bg-white text-gray-500 hover:-translate-y-0.5 hover:border-amber-300 hover:bg-amber-50 hover:text-amber-600 hover:shadow-sm dark:border-gray-700 dark:bg-neutral-950 dark:text-gray-400 dark:hover:border-amber-500/50 dark:hover:bg-amber-500/10 dark:hover:text-amber-300"
+          }`}
         >
           {isSaved ? (
-            <span>
-              <BookmarkCheck />
+            <span className="relative flex items-center justify-center">
+              <span className="absolute h-7 w-7 rounded-full bg-amber-300/30 blur-sm" />
+              <BookmarkCheck
+                size={20}
+                strokeWidth={2.4}
+                className="relative transition-transform duration-300 animate-in zoom-in-50"
+              />
             </span>
           ) : (
-            <span>
-              <Bookmark />
+            <span className="flex items-center justify-center transition-transform duration-300 group-hover:scale-110">
+              <Bookmark size={19} strokeWidth={2.2} />
             </span>
           )}
         </button>

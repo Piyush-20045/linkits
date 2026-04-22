@@ -5,5 +5,6 @@ export type Tool = {
   url: string;
   category: string;
   tags: string[];
+  saves?: number;
   saved?: boolean;
 };

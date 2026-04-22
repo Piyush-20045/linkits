@@ -1,4 +1,4 @@
-import mongoose, { Schema, models, model } from "mongoose";
+import { Schema, models, model } from "mongoose";
 
 const ToolSchema = new Schema(
   {
@@ -30,6 +30,10 @@ const ToolSchema = new Schema(
     tags: {
       type: [String],
       default: [],
+    },
+    saves: {
+      type: Number,
+      default: 0,
     },
   },
   { timestamps: true },

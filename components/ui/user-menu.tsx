@@ -8,13 +8,13 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import { BadgeCheckIcon, LayoutDashboard, LogOutIcon } from "lucide-react";
+import { LayoutDashboard, LogOutIcon, SquarePlus } from "lucide-react";
 import { signOut, useSession } from "next-auth/react";
 import { useRouter } from "next/navigation";
 
 export function UserMenu() {
   const { data } = useSession();
-  const route = useRouter()
+  const route = useRouter();
   return (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
@@ -31,9 +31,9 @@ export function UserMenu() {
             <LayoutDashboard />
             Dashboard
           </DropdownMenuItem>
-          <DropdownMenuItem>
-            <BadgeCheckIcon />
-            Account
+          <DropdownMenuItem onClick={() => route.push("/submit-tool")}>
+            <SquarePlus />
+            Submit Tool
           </DropdownMenuItem>
         </DropdownMenuGroup>
         <DropdownMenuSeparator />

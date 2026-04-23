@@ -82,6 +82,11 @@ export default function ToolCard({ tool }: ToolCardProps) {
           <h3 className="font-semibold text-gray-900 dark:text-gray-100">
             {tool.title}
           </h3>
+          {tool.source === "community" ? (
+            <span className="mt-2 inline-flex rounded-sm border border-gray-300 bg-white px-2 py-1 text-[10px] font-medium uppercase tracking-wide text-gray-600 dark:border-gray-700 dark:bg-black dark:text-gray-300">
+              Community Added
+            </span>
+          ) : null}
           <p className="text-xs text-gray-500 dark:text-gray-400">
             {categoryLabel}
           </p>
@@ -109,7 +114,12 @@ export default function ToolCard({ tool }: ToolCardProps) {
 
       {/* Action */}
       <div className="mt-auto flex pt-2">
-        <a href={tool.url} target="_blank" rel="noopener noreferrer" className="flex-1">
+        <a
+          href={tool.url}
+          target="_blank"
+          rel="noopener noreferrer"
+          className="flex-1"
+        >
           <Button
             variant="secondary"
             size="sm"

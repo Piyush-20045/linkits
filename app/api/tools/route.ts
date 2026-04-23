@@ -1,8 +1,8 @@
 import { NextResponse } from "next/server";
-import { getCategoryQueryValues } from "@/constants/categories";
-import { connectDB } from "@/lib/db";
 import { getServerSession } from "next-auth";
 import clientPromise from "@/lib/mongodb";
+import { getCategoryQueryValues } from "@/constants/categories";
+import { connectDB } from "@/lib/db";
 import Tool from "@/models/Tool";
 
 export async function GET(req: Request) {
@@ -12,10 +12,10 @@ export async function GET(req: Request) {
   const category = searchParams.get("category");
   const categoryValues = getCategoryQueryValues(category);
 
-  const query = categoryValues.length > 0 ? { category: { $in: categoryValues } } : {};
+  const query =
+    categoryValues.length > 0 ? { category: { $in: categoryValues } } : {};
 
   const tools = await Tool.find(query).sort({ createdAt: -1 });
-
   const session = await getServerSession();
 
   if (!session) {
@@ -34,4 +34,48 @@ export async function GET(req: Request) {
   }));
 
   return NextResponse.json(toolsWithSavedState);
+}
+
+export async function POST(req: Request) {
+  const session = await getServerSession();
+
+  if (!session?.user?.email) {
+    return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+  }
+
+  const { title, url, description, category, tags } = await req.json();
+
+  if (!title || !url || !description || !category) {
+    return NextResponse.json(
+      { error: "Missing required fields" },
+      { status: 400 },
+    );
+  }
+
+  await connectDB();
+
+  const existingTool = await Tool.findOne({ url });
+
+  if (existingTool) {
+    return NextResponse.json(
+      { error: "Tool already exists" },
+      { status: 409 },
+    );
+  }
+
+  const tool = await Tool.create({
+    title,
+    url,
+    description,
+    category,
+    tags: Array.isArray(tags) ? tags : [],
+    submittedBy: session.user.email,
+    source: "community",
+  });
+
+  return NextResponse.json({
+    success: true,
+    message: "Tool submitted successfully",
+    tool,
+  });
 }

@@ -50,8 +50,6 @@ export default function ToolCard({ tool }: ToolCardProps) {
 
       const data = await res.json();
 
-      console.log(data);
-
       setIsSaved(data.saved);
     } catch {
       setIsSaved((prev) => !prev); //rollback

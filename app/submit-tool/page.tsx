@@ -3,6 +3,7 @@ import { FormEvent, useState } from "react";
 import { useRouter } from "next/navigation";
 import { signIn, useSession } from "next-auth/react";
 import { ShieldCheck } from "lucide-react";
+import { toast } from "sonner";
 import Navbar from "@/components/layout/navbar";
 import { Button } from "@/components/ui/button";
 import { CATEGORIES } from "@/constants/categories";
@@ -43,13 +44,22 @@ export default function SubmitToolPage() {
         }),
       });
 
+      const data = await res.json();
+
       if (!res.ok) {
-        throw new Error("Failed to submit tool");
+        throw new Error(data.error || "Failed to submit tool");
       }
 
+      toast.success(data.message || "Tool submitted successfully");
       router.push("/directory");
-    } catch {
-      setError("Something went wrong. Please try again.");
+    } catch (error) {
+      const message =
+        error instanceof Error
+          ? error.message
+          : "Something went wrong. Please try again.";
+
+      setError(message);
+      toast.error(message);
     } finally {
       setIsSubmitting(false);
     }

@@ -12,10 +12,10 @@ export async function GET(req: Request) {
   const category = searchParams.get("category");
   const categoryValues = getCategoryQueryValues(category);
 
-  const query =
+  const query: Record<string, unknown> =
     categoryValues.length > 0 ? { category: { $in: categoryValues } } : {};
 
-  const tools = await Tool.find(query).sort({ createdAt: -1 });
+  const tools = await Tool.find(query).sort({ createdAt: -1 }).lean();
   const session = await getServerSession();
 
   if (!session) {
@@ -29,7 +29,7 @@ export async function GET(req: Request) {
   const savedToolIds = new Set((user?.savedTools || []).map(String));
 
   const toolsWithSavedState = tools.map((tool) => ({
-    ...tool.toObject(),
+    ...tool,
     saved: savedToolIds.has(String(tool._id)),
   }));
 

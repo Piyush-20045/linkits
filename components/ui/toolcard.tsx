@@ -80,14 +80,20 @@ export default function ToolCard({ tool }: ToolCardProps) {
           <h3 className="font-semibold text-gray-900 dark:text-gray-100">
             {tool.title}
           </h3>
-          {tool.source === "community" ? (
-            <span className="mt-2 inline-flex rounded-sm border border-gray-300 bg-white px-2 py-1 text-[10px] font-medium uppercase tracking-wide text-gray-600 dark:border-gray-700 dark:bg-black dark:text-gray-300">
-              Community Added
-            </span>
-          ) : null}
-          <p className="text-xs text-gray-500 dark:text-gray-400">
-            {categoryLabel}
-          </p>
+          <div className="mt-1 flex flex-wrap items-center gap-2 text-xs text-gray-500 dark:text-gray-400">
+            <span>{categoryLabel}</span>
+            {tool.source === "community" ? (
+              <>
+                <span
+                  aria-hidden="true"
+                  className="h-1 w-1 rounded-full bg-gray-300 dark:bg-gray-600"
+                />
+                <span className="text-gray-400 dark:text-gray-500">
+                  Community Added
+                </span>
+              </>
+            ) : null}
+          </div>
         </div>
       </div>
 

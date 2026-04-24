@@ -1,4 +1,4 @@
-import { Schema, models, model } from "mongoose";
+import mongoose, { Schema, model } from "mongoose";
 
 const ToolSchema = new Schema(
   {
@@ -44,4 +44,8 @@ const ToolSchema = new Schema(
   { timestamps: true },
 );
 
-export default models.Tool || model("Tool", ToolSchema);
+if (mongoose.models.Tool) {
+  delete mongoose.models.Tool;
+}
+
+export default model("Tool", ToolSchema);

@@ -4,20 +4,20 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { normalizeCategoryValue } from "@/constants/categories";
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
-import { useEffect, useMemo, useState } from "react";
+import { Suspense, useEffect, useMemo, useState } from "react";
 import { Tool } from "@/types/tool";
 import ToolCard from "@/components/ui/toolcard";
 import Categories from "./_components/categories";
 import { ShineBorder } from "@/components/ui/shine-border";
 import { useTheme } from "next-themes";
 
-export default function Directory() {
+function DirectoryContent() {
   const [tools, setTools] = useState<Tool[]>([]);
   const [loading, setLoading] = useState(true);
   const router = useRouter();
   const pathname = usePathname();
   const searchParams = useSearchParams();
-  const theme = useTheme()
+  const theme = useTheme();
 
   // Filters
   const [search, setSearch] = useState("");
@@ -162,5 +162,13 @@ export default function Directory() {
         </div>
       </div>
     </div>
+  );
+}
+
+export default function Directory() {
+  return (
+    <Suspense fallback={<div className="min-h-screen bg-white dark:bg-black" />}>
+      <DirectoryContent />
+    </Suspense>
   );
 }

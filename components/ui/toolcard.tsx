@@ -15,11 +15,13 @@ export default function ToolCard({ tool }: ToolCardProps) {
   const categoryLabel = getCategoryLabel(tool.category);
   const { data: session } = useSession();
   const [isSaved, setIsSaved] = useState(tool.saved ?? false);
+  const [bookmarkCount, setBookmarkCount] = useState(tool.saves ?? 0);
   const [isSavingBookmark, setIsSavingBookmark] = useState(false);
 
   useEffect(() => {
     setIsSaved(tool.saved ?? false);
-  }, [tool.saved]);
+    setBookmarkCount(tool.saves ?? 0);
+  }, [tool.saved, tool.saves]);
 
   const getHostname = (url: string) => {
     try {
@@ -38,8 +40,13 @@ export default function ToolCard({ tool }: ToolCardProps) {
       return signIn("google");
     }
 
-    // Optimistic update
-    setIsSaved((prev) => !prev);
+    const nextSavedState = !isSaved;
+    const previousCount = bookmarkCount;
+
+    setIsSaved(nextSavedState);
+    setBookmarkCount((prev) =>
+      nextSavedState ? prev + 1 : Math.max(prev - 1, 0),
+    );
 
     try {
       setIsSavingBookmark(true);
@@ -51,8 +58,12 @@ export default function ToolCard({ tool }: ToolCardProps) {
       const data = await res.json();
 
       setIsSaved(data.saved);
+      if (typeof data.saves === "number") {
+        setBookmarkCount(data.saves);
+      }
     } catch {
-      setIsSaved((prev) => !prev); //rollback
+      setIsSaved(!nextSavedState);
+      setBookmarkCount(previousCount);
     } finally {
       setIsSavingBookmark(false);
     }
@@ -132,33 +143,45 @@ export default function ToolCard({ tool }: ToolCardProps) {
             Visit Site
           </Button>
         </a>
-        <button
-          onClick={handleSave}
-          type="button"
-          aria-label={isSaved ? "Remove bookmark" : "Save bookmark"}
-          aria-pressed={isSaved}
-          disabled={isSavingBookmark}
-          className={`relative ml-3 inline-flex h-9 w-9 shrink-0 cursor-pointer items-center justify-center overflow-hidden rounded-full border transition-all duration-300 hover:scale-105 active:scale-95 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-amber-400 focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-70 dark:focus-visible:ring-offset-neutral-900 ${
+        <div
+          className={`ml-3 inline-flex h-8 shrink-0 items-center overflow-hidden rounded-full border transition-all duration-300 focus-within:ring-2 focus-within:ring-amber-400 focus-within:ring-offset-2 dark:focus-within:ring-offset-neutral-900 ${
             isSaved
-              ? "border-amber-300 bg-amber-100 text-amber-600 shadow-sm shadow-amber-200/70 hover:bg-amber-200 hover:text-amber-700 dark:border-amber-500/50 dark:bg-amber-500/5 dark:text-amber-400 dark:shadow-amber-900/30 dark:hover:bg-amber-500/25"
-              : "border-gray-200 bg-white text-gray-500 hover:-translate-y-0.5 hover:border-amber-300 hover:bg-amber-50 hover:text-amber-600 hover:shadow-sm dark:border-gray-700 dark:bg-neutral-950 dark:text-gray-400 dark:hover:border-amber-500/50 dark:hover:bg-amber-500/10 dark:hover:text-amber-300"
+              ? "border-amber-300 bg-amber-100 text-amber-700 shadow-sm shadow-amber-200/70 dark:border-amber-500/50 dark:bg-amber-500/5 dark:text-amber-400 dark:shadow-amber-900/30"
+              : "border-gray-200 bg-white text-gray-500 dark:border-gray-700 dark:bg-neutral-950 dark:text-gray-400"
           }`}
         >
-          {isSaved ? (
-            <span className="relative flex items-center justify-center">
-              <span className="absolute h-7 w-7 rounded-full bg-amber-300/30 blur-sm" />
-              <BookmarkCheck
-                size={20}
-                strokeWidth={2.4}
-                className="relative transition-transform duration-300 animate-in zoom-in-50"
-              />
-            </span>
-          ) : (
-            <span className="flex items-center justify-center transition-transform duration-300 group-hover:scale-110">
-              <Bookmark size={19} strokeWidth={2.2} />
-            </span>
-          )}
-        </button>
+          <button
+            onClick={handleSave}
+            type="button"
+            aria-label={isSaved ? "Remove bookmark" : "Save bookmark"}
+            aria-pressed={isSaved}
+            disabled={isSavingBookmark}
+            className={`relative inline-flex h-9 w-9 cursor-pointer items-center justify-center transition-all duration-300 hover:scale-105 active:scale-95 focus-visible:outline-none disabled:pointer-events-none disabled:opacity-70 ${
+              isSaved
+                ? "hover:bg-amber-200 dark:hover:bg-amber-500/25"
+                : "hover:bg-amber-50 hover:text-amber-600 dark:hover:bg-amber-500/10 dark:hover:text-amber-300"
+            }`}
+          >
+            {isSaved ? (
+              <span className="relative flex items-center justify-center">
+                <span className="absolute h-7 w-7 rounded-full bg-amber-300/30 blur-sm" />
+                <BookmarkCheck
+                  size={20}
+                  strokeWidth={2.4}
+                  className="relative animate-in zoom-in-50 transition-transform duration-300"
+                />
+              </span>
+            ) : (
+              <span className="flex items-center justify-center transition-transform duration-300 group-hover:scale-110">
+                <Bookmark size={19} strokeWidth={2.2} />
+              </span>
+            )}
+          </button>
+
+          <span className="border-l border-current/10 px-2.5 text-sm font-semibold">
+            {bookmarkCount}
+          </span>
+        </div>
       </div>
     </div>
   );

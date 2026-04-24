@@ -28,6 +28,7 @@ export async function POST(req: Request) {
 
   const savedToolIds = (user.savedTools || []).map(String);
   const isSaved = savedToolIds.includes(String(toolId));
+  let saves: number | undefined;
 
   const updateResult = await users.updateOne(
     { email: session.user.email },
@@ -40,14 +41,21 @@ export async function POST(req: Request) {
     await connectDB();
 
     if (isSaved) {
-      await Tool.updateOne(
+      const updatedTool = await Tool.findOneAndUpdate(
         { _id: toolId, saves: { $gt: 0 } },
         { $inc: { saves: -1 } },
+        { new: true },
       );
+      saves = updatedTool?.saves;
     } else {
-      await Tool.updateOne({ _id: toolId }, { $inc: { saves: 1 } });
+      const updatedTool = await Tool.findByIdAndUpdate(
+        toolId,
+        { $inc: { saves: 1 } },
+        { new: true },
+      );
+      saves = updatedTool?.saves;
     }
   }
 
-  return NextResponse.json({ saved: !isSaved });
+  return NextResponse.json({ saved: !isSaved, saves });
 }

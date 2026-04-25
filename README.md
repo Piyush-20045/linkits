@@ -1,36 +1,123 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Linkits – A Curated Developer Resources Platform
 
-## Getting Started
+Linkits is a full-stack web application where developers can discover useful tools, job platforms, interview preparation resources, AI tools, and free learning platforms in one place.
 
-First, run the development server:
+### Live Demo: [linkits](https://linkits.piyushh.tech/)
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+---
+
+## Preview
+
+![Linkits Preview](https://res.cloudinary.com/dhhhr2skx/image/upload/v1777062535/Screenshot_from_2026-04-25_01-58-10_sv6y3k.png)
+
+---
+
+## Features
+
+- Categorized directory of useful developer resources
+- Google OAuth authentication using NextAuth
+- Bookmark tools and access them from personal dashboard
+- Trending tools section based on user saves
+- Search and category filtering
+- Responsive modern UI with dark mode support
+- Animated homepage hero section using tsParticles
+
+---
+
+## Tech Stack
+
+### Frontend
+- Next.js
+- React
+- TypeScript
+- Tailwind CSS
+- Next Themes
+- tsParticles
+- Sonner
+
+### Backend
+- Next.js App Router APIs
+- MongoDB
+- Mongoose
+- NextAuth
+- MongoDB Adapter
+
+---
+
+## Setup Instructions
+
+### Prerequisites
+
+- Node.js & npm installed
+- MongoDB Atlas account
+- Google Cloud Console OAuth credentials
+
+
+#### 1. Clone the repository
+
+```
+git clone https://github.com/Piyush-20045/linkits.git
+cd linkits 
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+#### 2. Install dependencies
+```
+npm install
+```
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+#### 3. Create .env.local file
+```
+MONGODB_URI=your_mongodb_connection_string
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+NEXTAUTH_URL=https://linkits.piyushh.tech/
+NEXTAUTH_SECRET=your_random_secret_key
 
-## Learn More
+GOOGLE_CLIENT_ID=your_google_client_id
+GOOGLE_CLIENT_SECRET=your_google_client_secret
 
-To learn more about Next.js, take a look at the following resources:
+NEXT_PUBLIC_LOGO_DEV_KEY=your_logo_dev_public_key
+NEXT_PUBLIC_APP_URL=add_the_live_url_of_the_project
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+```
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+#### 4. Run the project
+```
+npm run dev
+```
 
-## Deploy on Vercel
+---
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+## Folder Structure
+```
+linkits/
+├── app/
+│   ├── api/
+│   ├── dashboard/
+│   ├── directory/
+│   └── ...
+├── components/
+├── constants/
+├── lib/
+├── models/
+├── public/
+├── types/
+├── README.md
+└── ...
+```
+---
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+## What I Learned
+- Implemented Google OAuth authentication using NextAuth
+- Understood the difference between Mongoose and MongoDB Adapter
+- Built secure API routes using Next.js App Router
+- Integrated MongoDB for storing tools and user data
+- Implemented bookmark system with user dashboard
+- Improved UI/UX with reusable components and responsive design
+
+---
+
+## Author
+**Piyush Yadav**
+
+- Twitter/X: [@piyush9436](https://x.com/Piyush9436)
+- LinkedIn: [@piyushyadav](https://www.linkedin.com/in/piyushyadav0011/)

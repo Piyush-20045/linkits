@@ -1,6 +1,7 @@
 "use client";
 import { useEffect, useState } from "react";
 import ToolCard from "@/components/ui/toolcard";
+import ToolCardSkeleton from "@/components/ui/toolcard-skeleton";
 import { Tool } from "@/types/tool";
 
 export default function TrendingTools() {
@@ -53,9 +54,9 @@ export default function TrendingTools() {
         </div>
 
         {loading ? (
-          <p className="text-sm text-gray-500 dark:text-gray-400">
-            Loading trending tools...
-          </p>
+          <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3">
+            <ToolCardSkeleton count={3} />
+          </div>
         ) : tools.length > 0 ? (
           <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3">
             {tools.map((tool) => (

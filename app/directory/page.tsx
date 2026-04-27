@@ -7,6 +7,7 @@ import { usePathname, useRouter, useSearchParams } from "next/navigation";
 import { Suspense, useEffect, useMemo, useState } from "react";
 import { Tool } from "@/types/tool";
 import ToolCard from "@/components/ui/toolcard";
+import ToolCardSkeleton from "@/components/ui/toolcard-skeleton";
 import Categories from "./_components/categories";
 import { ShineBorder } from "@/components/ui/shine-border";
 import { useTheme } from "next-themes";
@@ -125,7 +126,9 @@ function DirectoryContent() {
           {/* Results */}
           <main className="my-12 flex-1">
             {loading ? (
-              <p className="text-gray-500">Loading tools...</p>
+              <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3">
+                <ToolCardSkeleton count={6} />
+              </div>
             ) : (
               <>
                 <div className="mb-4 text-sm text-gray-500 dark:text-gray-400">

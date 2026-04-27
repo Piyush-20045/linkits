@@ -5,11 +5,12 @@ import { normalizeCategoryValue } from "@/constants/categories";
 import { ShineBorder } from "@/components/ui/shine-border";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { useTheme } from "next-themes";
 import { Tool } from "@/types/tool";
 import Categories from "./categories";
 import ToolCard from "@/components/ui/toolcard";
+import { useSession } from "next-auth/react";
 
 interface DirectoryContentProps {
   tools: Tool[];
@@ -20,12 +21,71 @@ export default function DirectoryContent({ tools }: DirectoryContentProps) {
   const pathname = usePathname();
   const searchParams = useSearchParams();
   const theme = useTheme();
+  const { status } = useSession();
 
   const [search, setSearch] = useState("");
+  const [savedTools, setSavedTools] = useState<Tool[]>([]);
   const selectedCategory = normalizeCategoryValue(searchParams.get("category"));
 
+  useEffect(() => {
+    if (status !== "authenticated") return;
+
+    let cancelled = false;
+
+    async function fetchSavedTools() {
+      try {
+        const res = await fetch("/api/saved-tools", {
+          cache: "no-store",
+        });
+        const data: Tool[] = await res.json();
+
+        if (!cancelled) {
+          setSavedTools(data);
+        }
+      } catch (error) {
+        console.error("Failed to fetch saved tools", error);
+      }
+    }
+
+    fetchSavedTools();
+
+    return () => {
+      cancelled = true;
+    };
+  }, [status]);
+
+  const savedToolsMap = useMemo(() => {
+    return new Map(savedTools.map((tool) => [String(tool._id), tool]));
+  }, [savedTools]);
+
+  const toolsWithSavedState = useMemo(() => {
+    return tools.map((tool) => {
+      if (status !== "authenticated") {
+        return {
+          ...tool,
+          saved: false,
+        };
+      }
+
+      const savedTool = savedToolsMap.get(String(tool._id));
+
+      if (!savedTool) {
+        return {
+          ...tool,
+          saved: false,
+        };
+      }
+
+      return {
+        ...tool,
+        saved: true,
+        saves: savedTool.saves ?? tool.saves,
+      };
+    });
+  }, [tools, savedToolsMap, status]);
+
   const filteredTools = useMemo(() => {
-    return tools.filter((tool) => {
+    return toolsWithSavedState.filter((tool) => {
       const matchesSearch =
         tool.title.toLowerCase().includes(search.toLowerCase()) ||
         tool.description.toLowerCase().includes(search.toLowerCase()) ||
@@ -39,7 +99,7 @@ export default function DirectoryContent({ tools }: DirectoryContentProps) {
 
       return matchesSearch && matchesCategory;
     });
-  }, [tools, search, selectedCategory]);
+  }, [toolsWithSavedState, search, selectedCategory]);
 
   function handleCategoryChange(category: string) {
     const nextSearchParams = new URLSearchParams(searchParams.toString());

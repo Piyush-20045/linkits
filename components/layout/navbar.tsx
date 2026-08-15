@@ -2,7 +2,7 @@
 import Link from "next/link";
 import { useState } from "react";
 import { Button } from "../ui/button";
-import { ChevronDown, Menu, X } from "lucide-react";
+import { Bookmark, ChevronDown, LayoutDashboard, Menu, X } from "lucide-react";
 import { usePathname } from "next/navigation";
 import { CATEGORIES } from "@/constants/categories";
 import { ToggleButton } from "../ui/toggle-button";
@@ -57,6 +57,16 @@ const Navbar = () => {
 
         {/* Right Side */}
         <div className="flex items-center gap-4">
+          <Link href="/dashboard">
+            <Button
+              variant="outline"
+              size="icon"
+              className="bg-white cursor-pointer"
+            >
+              <Bookmark />
+            </Button>
+          </Link>
+
           <ToggleButton />
 
           {/* Login || user profile */}

@@ -8,6 +8,7 @@ import { Button } from "@/components/ui/button";
 import ToolCard from "@/components/ui/toolcard";
 import ToolCardSkeleton from "@/components/ui/toolcard-skeleton";
 import { Tool } from "@/types/tool";
+import ToolsFilter from "./_components/tools-filter";
 
 export default function Dashboard() {
   const { data: session, status } = useSession();
@@ -72,6 +73,7 @@ export default function Dashboard() {
       <Navbar />
 
       <main className="mx-auto max-w-7xl px-4 py-10 sm:px-6 lg:px-8">
+        {/* Dashboard Header (avatar and name) */}
         <section className="rounded-lg border border-gray-200 bg-gray-50 p-6 dark:border-gray-800 dark:bg-neutral-950 sm:p-8">
           {status === "authenticated" ? (
             <div className="flex flex-col gap-5 sm:flex-row sm:items-center sm:justify-between">
@@ -94,6 +96,7 @@ export default function Dashboard() {
               </p>
             </div>
           ) : (
+            // fallback if user is not logged in
             <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
               <div>
                 <h1 className="text-2xl font-semibold">Your dashboard</h1>
@@ -109,6 +112,10 @@ export default function Dashboard() {
           )}
         </section>
 
+        {/* Filter section */}
+        <ToolsFilter />
+
+        {/* All the tools section */}
         {status === "authenticated" &&
           (loading ? (
             <section className="mt-10">
@@ -135,7 +142,7 @@ export default function Dashboard() {
               </Link>
             </section>
           ) : (
-            <section className="mt-10">
+            <section className="mt-6">
               <div className="mb-5">
                 <h2 className="text-2xl font-semibold">Saved Tools</h2>
                 <p className="mt-2 text-sm text-gray-500 dark:text-gray-400">

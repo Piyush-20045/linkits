@@ -18,7 +18,7 @@ const Hero = () => {
           for modern developers.
         </p>
         {/* Buttons */}
-        <div className="flex items-center justify-center gap-4 pt-4">
+        <div className="flex items-center justify-center gap-4 px-2 md:px-0 pt-4">
           <Link href="/directory" className="w-full sm:w-auto">
             <Button
               asChild

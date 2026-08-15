@@ -18,7 +18,11 @@ export function UserMenu() {
   return (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
-        <Button variant="ghost" size="icon" className="rounded-full">
+        <Button
+          variant="ghost"
+          size="icon"
+          className="rounded-full cursor-pointer"
+        >
           <Avatar>
             <AvatarImage src={data?.user.image || ""} alt="user-image" />
             <AvatarFallback>UN</AvatarFallback>
@@ -27,10 +31,6 @@ export function UserMenu() {
       </DropdownMenuTrigger>
       <DropdownMenuContent align="end">
         <DropdownMenuGroup>
-          <DropdownMenuItem onClick={() => route.push("/dashboard")}>
-            <LayoutDashboard />
-            Dashboard
-          </DropdownMenuItem>
           <DropdownMenuItem onClick={() => route.push("/submit-tool")}>
             <SquarePlus />
             Submit Tool

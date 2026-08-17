@@ -2,12 +2,10 @@ import { Button } from "@/components/ui/button";
 import { ButtonGroup } from "@/components/ui/button-group";
 import { useState } from "react";
 
-const ToolsFilter = () => {
-  const [isSelected, setIsSelected] = useState("tools");
-
+const ToolsFilter = ({ isSelected, setIsSelected }: any) => {
   return (
     <section className="flex py-4 mt-10 border-y-2">
-      <ButtonGroup className="overflow-x-scroll md:overflow-x-hidden">
+      <ButtonGroup className="overflow-x-scroll sm:overflow-x-hidden">
         <Button
           onClick={() => setIsSelected("tools")}
           variant="secondary"
@@ -18,10 +16,10 @@ const ToolsFilter = () => {
         </Button>
 
         <Button
-          onClick={() => setIsSelected("collections")}
+          onClick={() => setIsSelected("personal-collections")}
           variant="secondary"
           size="lg"
-          className={`border cursor-pointer ${isSelected === "collections" ? "bg-[#d8d8d8] dark:bg-[#171616] hover:bg-[#d8d8d8]" : ""} `}
+          className={`border cursor-pointer ${isSelected === "personal-collections" ? "bg-[#d8d8d8] dark:bg-[#171616] hover:bg-[#d8d8d8]" : ""} `}
         >
           Collections
         </Button>

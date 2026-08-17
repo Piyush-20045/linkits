@@ -17,7 +17,7 @@ export function DashboardHeader({ tools }: any) {
     .toUpperCase();
 
   return (
-    <div className="flex flex-col md:flex-row justify-between rounded-lg border border-black/10 bg-white/75 p-6 md:p-8 backdrop-blur-xl dark:border-white/10 dark:bg-white/6">
+    <div className="flex flex-col md:flex-row justify-between rounded-xl border border-black/10 bg-white/75 p-6 md:p-8 backdrop-blur-xl dark:border-white/10 dark:bg-white/6">
       {/* Heading and paragraph */}
       <div className="max-w-3xl">
         <span className="inline-flex rounded-full border border-black/10 bg-black/3 px-3 py-1 text-xs font-medium uppercase tracking-[0.22em] text-black/60 dark:border-white/10 dark:bg-white/3 dark:text-white/60">
@@ -53,7 +53,7 @@ export function DashboardHeader({ tools }: any) {
             </div>
 
             <p className="rounded-md border border-gray-200 bg-white px-4 py-2 text-sm font-medium text-gray-700 dark:border-gray-800 dark:bg-black dark:text-gray-300">
-              You have saved -{" "}
+              You have saved:{" "}
               <span className="text-black dark:text-white">
                 {tools.length} tools <br /> 3 private collections | 2 saved
                 collections{" "}

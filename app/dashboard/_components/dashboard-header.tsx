@@ -3,7 +3,7 @@ import { Button } from "@/components/ui/button";
 import { useSession } from "next-auth/react";
 import Link from "next/link";
 
-export function DashboardHeader({ tools }: any) {
+export default function DashboardHeader({ tools }: any) {
   const { data: session, status } = useSession();
 
   const user = session?.user;

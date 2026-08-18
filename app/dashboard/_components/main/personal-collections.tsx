@@ -1,13 +1,16 @@
 import { Tool } from "@/types/tool";
-import { DashboardEmptyState } from "../dashboard-empty-state";
+import {
+  CollectionEmptyState,
+  DashboardEmptyState,
+} from "../dashboard-empty-state";
 import { Folders, Plus } from "lucide-react";
 
 const PersonalCollections = ({ tools }: { tools: Tool[] }) => {
   return (
     <div>
-      {tools.length === 0 ? (
+      {tools.length !== 0 ? (
         // if 0 collections are there
-        <DashboardEmptyState
+        <CollectionEmptyState
           icon={Folders}
           heading="No collections created yet"
           description="Create private collections to keep your favorite tools organized."

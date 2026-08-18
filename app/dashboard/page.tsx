@@ -4,7 +4,7 @@ import { useSession } from "next-auth/react";
 import { Tool } from "@/types/tool";
 import Navbar from "@/components/layout/navbar";
 import DashboardHeader from "./_components/dashboard-header";
-import ToolsFilter from "./_components/tools-filter";
+import ToolsFilter from "./_components/main/tools-filter";
 import SavedTools from "./_components/main/saved-tools";
 import PersonalCollections from "./_components/main/personal-collections";
 import SavedCollections from "./_components/main/saved-collections";

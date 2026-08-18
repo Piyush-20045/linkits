@@ -52,7 +52,7 @@ export default function DashboardHeader({ tools }: any) {
               </div>
             </div>
 
-            <p className="rounded-md border border-gray-200 bg-white px-4 py-2 text-sm font-medium text-gray-700 dark:border-gray-800 dark:bg-black dark:text-gray-300">
+            <p className="rounded-md border border-gray-200 bg-white px-4 py-2 text-sm font-medium text-gray-700 dark:border-gray-800 dark:bg-white/3 dark:text-gray-300">
               You have saved:{" "}
               <span className="text-black dark:text-white">
                 {tools.length} tools <br /> 3 private collections | 2 saved

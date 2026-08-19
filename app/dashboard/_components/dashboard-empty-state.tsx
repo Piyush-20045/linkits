@@ -3,6 +3,7 @@ import { LucideIcon } from "lucide-react";
 import Link from "next/link";
 import { ReactNode, useState } from "react";
 import InputModal from "./input-modal";
+import { Collection } from "@/types/collection";
 
 type Action = {
   href: string;
@@ -17,6 +18,7 @@ type DashboardEmptyStateProps = {
   primaryBtn: Action;
 };
 
+// Empty State for Saved Collections
 export function DashboardEmptyState({
   icon: Icon,
   heading,
@@ -48,17 +50,53 @@ export function DashboardEmptyState({
   );
 }
 
+// Empty State for Personal Collections
 export function CollectionEmptyState({
   icon: Icon,
   heading,
   description,
   primaryBtn,
-}: DashboardEmptyStateProps) {
+  onCollectionCreated,
+}: DashboardEmptyStateProps & {
+  onCollectionCreated?: (collection: Collection) => void;
+}) {
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [errorMessage, setErrorMessage] = useState<string>("");
 
-  const handleFormSubmit = (data: any) => {
-    console.log("Submitted Modal Data:", data);
-    setIsModalOpen(false); // Close modal on submission success
+  const handleFormSubmit = async (data: {
+    title: string;
+    description: string;
+  }) => {
+    setIsSubmitting(true);
+    setErrorMessage("");
+
+    try {
+      const response = await fetch("/api/collections", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(data),
+      });
+
+      const result = await response.json();
+
+      if (!response.ok) {
+        setErrorMessage(result?.error || "Failed to create collection");
+        return;
+      }
+
+      if (result?.collection && onCollectionCreated) {
+        onCollectionCreated(result.collection);
+      }
+
+      setIsModalOpen(false);
+    } catch {
+      setErrorMessage("Something went wrong. Please try again.");
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
   return (
@@ -89,6 +127,8 @@ export function CollectionEmptyState({
         isOpen={isModalOpen}
         onClose={() => setIsModalOpen(false)}
         onSubmit={handleFormSubmit}
+        isSubmitting={isSubmitting}
+        errorMessage={errorMessage}
       />
     </section>
   );

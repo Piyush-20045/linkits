@@ -2,6 +2,7 @@
 import { useEffect, useState } from "react";
 import { useSession } from "next-auth/react";
 import { Tool } from "@/types/tool";
+import { Collection } from "@/types/collection";
 import Navbar from "@/components/layout/navbar";
 import DashboardHeader from "./_components/dashboard-header";
 import ToolsFilter from "./_components/main/tools-filter";
@@ -12,6 +13,7 @@ import SavedCollections from "./_components/main/saved-collections";
 export default function Dashboard() {
   const { data: session, status } = useSession();
   const [tools, setTools] = useState<Tool[]>([]);
+  const [collections, setCollections] = useState<Collection[]>([]);
   const [loading, setLoading] = useState(true);
   const [isSelected, setIsSelected] = useState("tools");
 
@@ -20,29 +22,41 @@ export default function Dashboard() {
 
     if (status === "unauthenticated") {
       setTools([]);
+      setCollections([]);
       setLoading(false);
       return;
     }
 
     let cancelled = false;
 
-    async function fetchSavedTools() {
+    async function fetchDashboardData() {
       setLoading(true);
 
       try {
-        const res = await fetch("/api/saved-tools", {
-          cache: "no-store",
-        });
-        const data: Tool[] = await res.json();
+        const [savedToolsRes, collectionsRes] = await Promise.all([
+          fetch("/api/saved-tools", {
+            cache: "no-store",
+          }),
+          fetch("/api/collections", {
+            cache: "no-store",
+          }),
+        ]);
+
+        const savedToolsData: Tool[] = await savedToolsRes.json();
+        const collectionsData: Collection[] = collectionsRes.ok
+          ? await collectionsRes.json()
+          : [];
 
         if (!cancelled) {
-          setTools(data);
+          setTools(savedToolsData);
+          setCollections(collectionsData);
         }
       } catch (error) {
-        console.error("Failed to fetch saved tools", error);
+        console.error("Failed to fetch dashboard data", error);
 
         if (!cancelled) {
           setTools([]);
+          setCollections([]);
         }
       } finally {
         if (!cancelled) {
@@ -51,7 +65,7 @@ export default function Dashboard() {
       }
     }
 
-    fetchSavedTools();
+    fetchDashboardData();
 
     return () => {
       cancelled = true;
@@ -64,7 +78,11 @@ export default function Dashboard() {
 
       <main className="mx-auto max-w-7xl px-4 py-10 sm:px-6 lg:px-8">
         {/* Dashboard Header (avatar and name) */}
-        <DashboardHeader tools={tools} />
+        <DashboardHeader
+          toolsCount={tools.length}
+          personalCollectionsCount={collections.length}
+          savedCollectionsCount={0}
+        />
 
         {/* Filter section */}
         <ToolsFilter isSelected={isSelected} setIsSelected={setIsSelected} />
@@ -75,7 +93,12 @@ export default function Dashboard() {
           <SavedTools tools={tools} loading={loading} />
         ) : isSelected === "personal-collections" ? (
           // 2. PERSONAL COLLECTIONS
-          <PersonalCollections tools={tools} />
+          <PersonalCollections
+            collections={collections}
+            onCollectionCreated={(collection) =>
+              setCollections((prev) => [collection, ...prev])
+            }
+          />
         ) : (
           // 3. SAVED COLLECTIONS
           <SavedCollections tools={tools} />

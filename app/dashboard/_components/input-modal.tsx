@@ -3,13 +3,38 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Folders } from "lucide-react";
-import { useState, type ChangeEvent, type FormEvent } from "react";
+import { useEffect, useState, type ChangeEvent, type FormEvent } from "react";
 
-export default function InputModal({ isOpen, onClose, onSubmit }: any) {
+type FormData = {
+  title: string;
+  description: string;
+};
+
+type InputModalProps = {
+  isOpen: boolean;
+  onClose: () => void;
+  onSubmit: (data: FormData) => Promise<void> | void;
+  isSubmitting?: boolean;
+  errorMessage?: string;
+};
+
+export default function InputModal({
+  isOpen,
+  onClose,
+  onSubmit,
+  isSubmitting = false,
+  errorMessage,
+}: InputModalProps) {
   const [formData, setFormData] = useState({
     title: "",
     description: "",
   });
+
+  useEffect(() => {
+    if (!isOpen) {
+      setFormData({ title: "", description: "" });
+    }
+  }, [isOpen]);
 
   if (!isOpen) return null;
 
@@ -20,9 +45,9 @@ export default function InputModal({ isOpen, onClose, onSubmit }: any) {
     setFormData((prev) => ({ ...prev, [name]: value }));
   };
 
-  const handleSubmit = (e: FormEvent<HTMLFormElement>) => {
+  const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    onSubmit(formData);
+    await onSubmit(formData);
     // Optional: reset form or let parent handle state destruction
   };
 
@@ -91,14 +116,25 @@ export default function InputModal({ isOpen, onClose, onSubmit }: any) {
             />
           </div>
 
+          {errorMessage ? (
+            <p className="text-sm font-medium text-red-600 dark:text-red-400">
+              {errorMessage}
+            </p>
+          ) : null}
+
           {/* Footer Action Buttons */}
           <div className="mt-6 flex items-center justify-end gap-3 pt-2">
-            <Button type="button" onClick={onClose} variant="secondary">
+            <Button
+              type="button"
+              onClick={onClose}
+              variant="secondary"
+              disabled={isSubmitting}
+            >
               Cancel
             </Button>
 
-            <Button type="submit" variant="default">
-              Create
+            <Button type="submit" variant="default" disabled={isSubmitting}>
+              {isSubmitting ? "Creating..." : "Create"}
             </Button>
           </div>
         </form>

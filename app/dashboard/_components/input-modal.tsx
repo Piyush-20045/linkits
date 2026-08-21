@@ -16,6 +16,10 @@ type InputModalProps = {
   onSubmit: (data: FormData) => Promise<void> | void;
   isSubmitting?: boolean;
   errorMessage?: string;
+  title?: string;
+  description?: string;
+  submitLabel?: string;
+  initialValues?: FormData;
 };
 
 export default function InputModal({
@@ -24,6 +28,10 @@ export default function InputModal({
   onSubmit,
   isSubmitting = false,
   errorMessage,
+  title = "Create New Collection",
+  description = "Group your favorite tools in one place and organize them your way.",
+  submitLabel = "Create",
+  initialValues,
 }: InputModalProps) {
   const [formData, setFormData] = useState({
     title: "",
@@ -31,10 +39,15 @@ export default function InputModal({
   });
 
   useEffect(() => {
-    if (!isOpen) {
+    if (isOpen) {
+      setFormData({
+        title: initialValues?.title ?? "",
+        description: initialValues?.description ?? "",
+      });
+    } else {
       setFormData({ title: "", description: "" });
     }
-  }, [isOpen]);
+  }, [isOpen, initialValues]);
 
   if (!isOpen) return null;
 
@@ -64,10 +77,10 @@ export default function InputModal({
         {/* Header */}
         <h3 className="mb-2 flex items-center gap-2.5 text-xl font-bold leading-6 text-slate-900 dark:text-white">
           <Folders className="h-6 w-6 text-slate-700 dark:text-slate-300" />
-          Create New Collection
+          {title}
         </h3>
         <p className="mb-5 text-sm text-slate-600 dark:text-neutral-400">
-          Group your favorite tools in one place and organize them your way.
+          {description}
         </p>
 
         {/* Form Body */}
@@ -134,7 +147,7 @@ export default function InputModal({
             </Button>
 
             <Button type="submit" variant="default" disabled={isSubmitting}>
-              {isSubmitting ? "Creating..." : "Create"}
+              {isSubmitting ? `${submitLabel}...` : submitLabel}
             </Button>
           </div>
         </form>

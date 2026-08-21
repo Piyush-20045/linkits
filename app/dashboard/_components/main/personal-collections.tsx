@@ -12,6 +12,8 @@ type PersonalCollectionsProps = {
   collections: Collection[];
   tools: Tool[];
   onCollectionCreated: (collection: Collection) => void;
+  onCollectionUpdated: (collection: Collection) => void;
+  onCollectionDeleted: (collectionId: string) => void;
 };
 
 type CreateCollectionPayload = {
@@ -23,11 +25,16 @@ const PersonalCollections = ({
   collections,
   tools,
   onCollectionCreated,
+  onCollectionUpdated,
+  onCollectionDeleted,
 }: PersonalCollectionsProps) => {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [selectedCollectionId, setSelectedCollectionId] = useState<
     string | null
   >(null);
+  const [editingCollection, setEditingCollection] = useState<Collection | null>(
+    null,
+  );
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [errorMessage, setErrorMessage] = useState("");
 
@@ -44,9 +51,53 @@ const PersonalCollections = ({
       )
     : [];
 
+  const editingInitialValues = editingCollection
+    ? {
+        title: editingCollection.name,
+        description: editingCollection.description || "",
+      }
+    : undefined;
+
   const handleOpenCreateModal = () => {
+    setEditingCollection(null);
     setErrorMessage("");
     setIsModalOpen(true);
+  };
+
+  const handleOpenEditModal = (collection: Collection) => {
+    setEditingCollection(collection);
+    setErrorMessage("");
+    setIsModalOpen(true);
+  };
+
+  const handleDeleteCollection = async (collection: Collection) => {
+    const shouldDelete = window.confirm(
+      `Delete "${collection.name}"? This cannot be undone.`,
+    );
+
+    if (!shouldDelete) return;
+
+    setErrorMessage("");
+
+    try {
+      const response = await fetch(`/api/collections/${collection._id}`, {
+        method: "DELETE",
+      });
+
+      const result = await response.json();
+
+      if (!response.ok) {
+        setErrorMessage(result?.error || "Failed to delete collection");
+        return;
+      }
+
+      onCollectionDeleted(collection._id);
+      if (selectedCollectionId === collection._id) {
+        setSelectedCollectionId(null);
+      }
+    } catch {
+      setErrorMessage("Something went wrong. Please try again.");
+    }
   };
 
   const handleFormSubmit = async (data: CreateCollectionPayload) => {
@@ -54,26 +105,42 @@ const PersonalCollections = ({
     setErrorMessage("");
 
     try {
-      const response = await fetch("/api/collections", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
+      const isEditing = Boolean(editingCollection);
+      const response = await fetch(
+        isEditing
+          ? `/api/collections/${editingCollection?._id}`
+          : "/api/collections",
+        {
+          method: isEditing ? "PATCH" : "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify(data),
         },
-        body: JSON.stringify(data),
-      });
+      );
 
       const result = await response.json();
 
       if (!response.ok) {
-        setErrorMessage(result?.error || "Failed to create collection");
+        setErrorMessage(
+          result?.error ||
+            (isEditing
+              ? "Failed to update collection"
+              : "Failed to create collection"),
+        );
         return;
       }
 
       if (result?.collection) {
-        onCollectionCreated(result.collection);
+        if (isEditing) {
+          onCollectionUpdated(result.collection);
+        } else {
+          onCollectionCreated(result.collection);
+        }
       }
 
       setIsModalOpen(false);
+      setEditingCollection(null);
     } catch {
       setErrorMessage("Something went wrong. Please try again.");
     } finally {
@@ -110,6 +177,8 @@ const PersonalCollections = ({
           collections={collections}
           onCreateCollection={handleOpenCreateModal}
           onSelectCollection={setSelectedCollectionId}
+          onEditCollection={handleOpenEditModal}
+          onDeleteCollection={handleDeleteCollection}
         />
       ) : null}
 
@@ -119,6 +188,14 @@ const PersonalCollections = ({
         onSubmit={handleFormSubmit}
         isSubmitting={isSubmitting}
         errorMessage={errorMessage}
+        title={editingCollection ? "Edit Collection" : "Create New Collection"}
+        description={
+          editingCollection
+            ? "Update the collection name and description."
+            : "Group your favorite tools in one place and organize them your way."
+        }
+        submitLabel={editingCollection ? "Save Changes" : "Create"}
+        initialValues={editingInitialValues}
       />
     </div>
   );

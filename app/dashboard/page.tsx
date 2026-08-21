@@ -99,6 +99,20 @@ export default function Dashboard() {
             onCollectionCreated={(collection) =>
               setCollections((prev) => [collection, ...prev])
             }
+            onCollectionUpdated={(collection) =>
+              setCollections((prev) =>
+                prev.map((item) =>
+                  item._id === collection._id
+                    ? { ...item, ...collection }
+                    : item,
+                ),
+              )
+            }
+            onCollectionDeleted={(collectionId) =>
+              setCollections((prev) =>
+                prev.filter((collection) => collection._id !== collectionId),
+              )
+            }
           />
         ) : (
           // 3. SAVED COLLECTIONS

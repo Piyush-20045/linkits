@@ -70,6 +70,12 @@ const PersonalCollections = ({
     setIsModalOpen(true);
   };
 
+  const handleCloseModal = () => {
+    setIsModalOpen(false);
+    setEditingCollection(null);
+    setErrorMessage("");
+  };
+
   const handleDeleteCollection = async (collection: Collection) => {
     const shouldDelete = window.confirm(
       `Delete "${collection.name}"? This cannot be undone.`,
@@ -184,7 +190,7 @@ const PersonalCollections = ({
 
       <InputModal
         isOpen={isModalOpen}
-        onClose={() => setIsModalOpen(false)}
+        onClose={handleCloseModal}
         onSubmit={handleFormSubmit}
         isSubmitting={isSubmitting}
         errorMessage={errorMessage}

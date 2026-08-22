@@ -2,7 +2,7 @@
 import Link from "next/link";
 import { useState } from "react";
 import { Button } from "../ui/button";
-import { Bookmark, ChevronDown, LayoutDashboard, Menu, X } from "lucide-react";
+import { Bookmark, ChevronDown, Menu, X } from "lucide-react";
 import { usePathname } from "next/navigation";
 import { CATEGORIES } from "@/constants/categories";
 import { ToggleButton } from "../ui/toggle-button";

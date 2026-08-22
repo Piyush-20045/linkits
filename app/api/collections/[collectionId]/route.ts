@@ -12,6 +12,16 @@ type CollectionBody = {
   description?: string;
 };
 
+function getCollectionIdVariants(collectionId: string) {
+  const ids: Array<string | ObjectId> = [collectionId];
+
+  if (ObjectId.isValid(collectionId)) {
+    ids.push(new ObjectId(collectionId));
+  }
+
+  return ids;
+}
+
 export async function PATCH(req: Request, { params }: CollectionParams) {
   const session = await getServerSession();
 
@@ -19,7 +29,7 @@ export async function PATCH(req: Request, { params }: CollectionParams) {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   }
 
-  const { collectionId } = params;
+  const { collectionId } = await params;
   const body = (await req.json()) as CollectionBody;
   const title = body.title?.trim();
   const description = body.description?.trim() || "";
@@ -47,12 +57,12 @@ export async function PATCH(req: Request, { params }: CollectionParams) {
 
   const client = (await clientPromise).db();
   const users = client.collection("users");
-  const userObjectId = new ObjectId(collectionId);
+  const collectionIds = getCollectionIdVariants(collectionId);
 
   const updateResult = await users.updateOne(
     {
       email: session.user.email,
-      "collections._id": userObjectId,
+      "collections._id": { $in: collectionIds },
     },
     {
       $set: {
@@ -64,7 +74,10 @@ export async function PATCH(req: Request, { params }: CollectionParams) {
   );
 
   if (updateResult.matchedCount === 0) {
-    return NextResponse.json({ error: "Collection not found" }, { status: 404 });
+    return NextResponse.json(
+      { error: "Collection not found" },
+      { status: 404 },
+    );
   }
 
   return NextResponse.json({
@@ -77,28 +90,28 @@ export async function PATCH(req: Request, { params }: CollectionParams) {
   });
 }
 
-export async function DELETE(
-  _req: Request,
-  { params }: CollectionParams,
-) {
+export async function DELETE(_req: Request, { params }: CollectionParams) {
   const session = await getServerSession();
 
   if (!session?.user?.email) {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   }
 
-  const { collectionId } = params;
+  const { collectionId } = await params;
   const client = (await clientPromise).db();
   const users = client.collection("users");
-  const userObjectId = new ObjectId(collectionId);
+  const collectionIds = getCollectionIdVariants(collectionId);
 
   const updateResult = await users.updateOne(
     { email: session.user.email },
-    { $pull: { collections: { _id: userObjectId } } },
+    { $pull: { collections: { _id: { $in: collectionIds } } } },
   );
 
   if (updateResult.matchedCount === 0) {
-    return NextResponse.json({ error: "Collection not found" }, { status: 404 });
+    return NextResponse.json(
+      { error: "Collection not found" },
+      { status: 404 },
+    );
   }
 
   return NextResponse.json({ success: true });

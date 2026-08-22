@@ -1,6 +1,5 @@
 import { Button } from "@/components/ui/button";
 import { ButtonGroup } from "@/components/ui/button-group";
-import { useState } from "react";
 
 const ToolsFilter = ({ isSelected, setIsSelected }: any) => {
   return (

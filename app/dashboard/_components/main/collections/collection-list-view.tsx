@@ -57,6 +57,7 @@ export default function CollectionListView({
       <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
         {collections.map((collection) => (
           <div
+            key={collection._id}
             onClick={() => onSelectCollection(collection._id)}
             className="cursor-pointer rounded-xl border border-black/10 bg-neutral-50 px-5 py-4 text-left hover:bg-neutral-100 dark:border-white/10 dark:bg-neutral-900 dark:hover:bg-neutral-950"
           >
@@ -69,13 +70,10 @@ export default function CollectionListView({
               </h3>
 
               {/* Actions Btn: view, edit, delete */}
-              <span className="z-100">
+              <span onClick={(event) => event.stopPropagation()}>
                 <DropdownMenu>
                   <DropdownMenuTrigger asChild>
-                    <button
-                      onClick={(event) => event.stopPropagation()}
-                      className="cursor-pointer rounded-full p-2 hover:bg-neutral-200 dark:hover:bg-neutral-800"
-                    >
+                    <button className="cursor-pointer rounded-full p-2 hover:bg-neutral-200 dark:hover:bg-neutral-800">
                       <Ellipsis className="h-5 w-5" />
                     </button>
                   </DropdownMenuTrigger>
@@ -83,7 +81,6 @@ export default function CollectionListView({
                     <DropdownMenuGroup>
                       <DropdownMenuItem
                         onSelect={(event) => {
-                          event.preventDefault();
                           onSelectCollection(collection._id);
                         }}
                       >
@@ -92,7 +89,6 @@ export default function CollectionListView({
                       </DropdownMenuItem>
                       <DropdownMenuItem
                         onSelect={(event) => {
-                          event.preventDefault();
                           onEditCollection(collection);
                         }}
                       >
@@ -105,7 +101,6 @@ export default function CollectionListView({
                       <DropdownMenuItem
                         variant="destructive"
                         onSelect={(event) => {
-                          event.preventDefault();
                           onDeleteCollection(collection);
                         }}
                       >

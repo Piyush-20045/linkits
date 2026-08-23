@@ -43,11 +43,17 @@ export async function POST(req: Request) {
   }
 
   if (target !== "default" && target !== "collection") {
-    return NextResponse.json({ error: "Invalid bookmark target" }, { status: 400 });
+    return NextResponse.json(
+      { error: "Invalid bookmark target" },
+      { status: 400 },
+    );
   }
 
   if (action !== "add" && action !== "remove") {
-    return NextResponse.json({ error: "Invalid bookmark action" }, { status: 400 });
+    return NextResponse.json(
+      { error: "Invalid bookmark action" },
+      { status: 400 },
+    );
   }
 
   if (target === "collection" && !collectionId) {
@@ -148,9 +154,15 @@ export async function POST(req: Request) {
 
   if (action === "remove") {
     if (alreadySaved) {
+      // $[] (all-positional) strips the tool from every collection in one update
       const updateResult = await users.updateOne(
         { email: session.user.email },
-        { $pull: { savedTools: { $in: toolIdVariants } } },
+        {
+          $pull: {
+            savedTools: { $in: toolIdVariants },
+            "collections.$[].toolIds": { $in: toolIdVariants },
+          },
+        },
       );
 
       if (updateResult.modifiedCount > 0) {

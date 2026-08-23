@@ -9,12 +9,16 @@ type CollectionToolsViewProps = {
   collection: Collection;
   tools: Tool[];
   onBack: () => void;
+  onToolRemoved: (toolId: string) => void;
+  onToolRemoveFailed: (toolId: string) => void;
 };
 
 export default function CollectionToolsView({
   collection,
   tools,
   onBack,
+  onToolRemoved,
+  onToolRemoveFailed,
 }: CollectionToolsViewProps) {
   return (
     <section className="mt-6">
@@ -53,7 +57,14 @@ export default function CollectionToolsView({
       ) : (
         <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
           {tools.map((tool) => (
-            <ToolCard key={tool._id} tool={tool} />
+            <ToolCard
+              key={tool._id}
+              tool={tool}
+              bookmarkMode="remove"
+              collectionId={collection._id}
+              onRemoved={() => onToolRemoved(tool._id)}
+              onRemoveFailed={() => onToolRemoveFailed(tool._id)}
+            />
           ))}
         </div>
       )}

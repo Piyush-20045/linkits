@@ -2,21 +2,28 @@
 import { Button } from "@/components/ui/button";
 import { getCategoryLabel } from "@/constants/categories";
 import { Tool } from "@/types/tool";
-import { Bookmark, BookmarkCheck } from "lucide-react";
-import { signIn, useSession } from "next-auth/react";
 import Image from "next/image";
 import { useEffect, useState } from "react";
+import { BookmarkPicker } from "./bookmark-picker";
 
 interface ToolCardProps {
   tool: Tool;
+  bookmarkMode?: "picker" | "remove";
+  collectionId?: string;
+  onRemoved?: () => void;
+  onRemoveFailed?: () => void;
 }
 
-export default function ToolCard({ tool }: ToolCardProps) {
+export default function ToolCard({
+  tool,
+  bookmarkMode = "picker",
+  collectionId,
+  onRemoved,
+  onRemoveFailed,
+}: ToolCardProps) {
   const categoryLabel = getCategoryLabel(tool.category);
-  const { data: session } = useSession();
   const [isSaved, setIsSaved] = useState(tool.saved ?? false);
   const [bookmarkCount, setBookmarkCount] = useState(tool.saves ?? 0);
-  const [isSavingBookmark, setIsSavingBookmark] = useState(false);
 
   useEffect(() => {
     setIsSaved(tool.saved ?? false);
@@ -32,42 +39,6 @@ export default function ToolCard({ tool }: ToolCardProps) {
     }
   };
   const hostname = getHostname(tool.url);
-
-  const handleSave = async () => {
-    if (isSavingBookmark) return;
-
-    if (!session) {
-      return signIn("google");
-    }
-
-    const nextSavedState = !isSaved;
-    const previousCount = bookmarkCount;
-
-    setIsSaved(nextSavedState);
-    setBookmarkCount((prev) =>
-      nextSavedState ? prev + 1 : Math.max(prev - 1, 0),
-    );
-
-    try {
-      setIsSavingBookmark(true);
-      const res = await fetch("/api/bookmark", {
-        method: "POST",
-        body: JSON.stringify({ toolId: tool._id }),
-      });
-
-      const data = await res.json();
-
-      setIsSaved(data.saved);
-      if (typeof data.saves === "number") {
-        setBookmarkCount(data.saves);
-      }
-    } catch {
-      setIsSaved(!nextSavedState);
-      setBookmarkCount(previousCount);
-    } finally {
-      setIsSavingBookmark(false);
-    }
-  };
 
   return (
     <div className="group relative flex flex-col rounded-md border border-gray-200 bg-gray-50 p-5 transition-all hover:border-gray-300 hover:shadow-sm dark:border-gray-800 dark:bg-neutral-900 dark:hover:border-gray-700 hover:scale-105">
@@ -143,45 +114,23 @@ export default function ToolCard({ tool }: ToolCardProps) {
             Visit Site
           </Button>
         </a>
-        <div
-          className={`ml-3 inline-flex h-8 shrink-0 items-center overflow-hidden rounded-full border transition-all duration-300 focus-within:ring-2 focus-within:ring-amber-400 focus-within:ring-offset-2 dark:focus-within:ring-offset-neutral-900 ${
-            isSaved
-              ? "border-amber-300 bg-amber-100 text-amber-700 shadow-sm shadow-amber-200/70 dark:border-amber-500/50 dark:bg-amber-500/5 dark:text-amber-400 dark:shadow-amber-900/30"
-              : "border-gray-200 bg-white text-gray-500 dark:border-gray-700 dark:bg-neutral-950 dark:text-gray-400"
-          }`}
-        >
-          <button
-            onClick={handleSave}
-            type="button"
-            aria-label={isSaved ? "Remove bookmark" : "Save bookmark"}
-            aria-pressed={isSaved}
-            disabled={isSavingBookmark}
-            className={`relative inline-flex h-9 w-9 cursor-pointer items-center justify-center transition-all duration-300 hover:scale-105 active:scale-95 focus-visible:outline-none disabled:pointer-events-none disabled:opacity-70 ${
-              isSaved
-                ? "hover:bg-amber-200 dark:hover:bg-amber-500/25"
-                : "hover:bg-amber-50 hover:text-amber-600 dark:hover:bg-amber-500/10 dark:hover:text-amber-300"
-            }`}
-          >
-            {isSaved ? (
-              <span className="relative flex items-center justify-center">
-                <span className="absolute h-7 w-7 rounded-full bg-amber-300/30 blur-sm" />
-                <BookmarkCheck
-                  size={20}
-                  strokeWidth={2.4}
-                  className="relative animate-in zoom-in-50 transition-transform duration-300"
-                />
-              </span>
-            ) : (
-              <span className="flex items-center justify-center transition-transform duration-300 group-hover:scale-110">
-                <Bookmark size={19} strokeWidth={2.2} />
-              </span>
-            )}
-          </button>
-
-          <span className="border-l border-current/10 px-2.5 text-sm font-semibold">
-            {bookmarkCount}
-          </span>
-        </div>
+        <BookmarkPicker
+          toolId={tool._id}
+          count={bookmarkCount}
+          isSaved={bookmarkMode === "remove" ? true : isSaved}
+          mode={bookmarkMode}
+          collectionId={collectionId}
+          onRemoved={onRemoved}
+          onRemoveFailed={onRemoveFailed}
+          onBookmarkChange={({ saved, saves }) => {
+            if (typeof saved === "boolean") {
+              setIsSaved(saved);
+            }
+            if (typeof saves === "number") {
+              setBookmarkCount(saves);
+            }
+          }}
+        />
       </div>
     </div>
   );

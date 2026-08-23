@@ -8,9 +8,16 @@ import { Tool } from "@/types/tool";
 interface SavedToolsProps {
   tools: Tool[];
   loading: boolean;
+  onToolRemoved: (toolId: string) => void;
+  onToolRemoveFailed: (tool: Tool) => void;
 }
 
-const SavedTools = ({ tools, loading }: SavedToolsProps) => {
+const SavedTools = ({
+  tools,
+  loading,
+  onToolRemoved,
+  onToolRemoveFailed,
+}: SavedToolsProps) => {
   return (
     <div>
       {loading ? (
@@ -51,7 +58,13 @@ const SavedTools = ({ tools, loading }: SavedToolsProps) => {
 
           <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
             {tools.map((tool: Tool) => (
-              <ToolCard key={tool._id} tool={tool} />
+              <ToolCard
+                key={tool._id}
+                tool={tool}
+                bookmarkMode="remove"
+                onRemoved={() => onToolRemoved(tool._id)}
+                onRemoveFailed={() => onToolRemoveFailed(tool)}
+              />
             ))}
           </div>
         </section>

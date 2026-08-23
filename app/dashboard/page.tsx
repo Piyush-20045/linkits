@@ -90,7 +90,22 @@ export default function Dashboard() {
         {/* SAVED TOOLS && PERSONAL COLLECTIONS && SAVED COLLECTIONS */}
         {isSelected === "tools" ? (
           // 1. SAVED TOOLS
-          <SavedTools tools={tools} loading={loading} />
+          <SavedTools
+            tools={tools}
+            loading={loading}
+            onToolRemoved={(toolId) =>
+              setTools((prev) =>
+                prev.filter((tool) => String(tool._id) !== String(toolId)),
+              )
+            }
+            onToolRemoveFailed={(tool) =>
+              setTools((prev) =>
+                prev.some((item) => String(item._id) === String(tool._id))
+                  ? prev
+                  : [tool, ...prev],
+              )
+            }
+          />
         ) : isSelected === "personal-collections" ? (
           // 2. PERSONAL COLLECTIONS
           <PersonalCollections
@@ -111,6 +126,38 @@ export default function Dashboard() {
             onCollectionDeleted={(collectionId) =>
               setCollections((prev) =>
                 prev.filter((collection) => collection._id !== collectionId),
+              )
+            }
+            onCollectionToolRemoved={(collectionId, toolId) =>
+              setCollections((prev) =>
+                prev.map((collection) =>
+                  collection._id === collectionId
+                    ? {
+                        ...collection,
+                        toolIds: collection.toolIds.filter(
+                          (id) => String(id) !== String(toolId),
+                        ),
+                      }
+                    : collection,
+                ),
+              )
+            }
+            onCollectionToolRemoveFailed={(collectionId, toolId) =>
+              setCollections((prev) =>
+                prev.map((collection) => {
+                  if (collection._id !== collectionId) return collection;
+
+                  const alreadyPresent = collection.toolIds.some(
+                    (id) => String(id) === String(toolId),
+                  );
+
+                  return alreadyPresent
+                    ? collection
+                    : {
+                        ...collection,
+                        toolIds: [toolId, ...collection.toolIds],
+                      };
+                }),
               )
             }
           />

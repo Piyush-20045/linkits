@@ -14,6 +14,8 @@ type PersonalCollectionsProps = {
   onCollectionCreated: (collection: Collection) => void;
   onCollectionUpdated: (collection: Collection) => void;
   onCollectionDeleted: (collectionId: string) => void;
+  onCollectionToolRemoved: (collectionId: string, toolId: string) => void;
+  onCollectionToolRemoveFailed: (collectionId: string, toolId: string) => void;
 };
 
 type CreateCollectionPayload = {
@@ -27,6 +29,8 @@ const PersonalCollections = ({
   onCollectionCreated,
   onCollectionUpdated,
   onCollectionDeleted,
+  onCollectionToolRemoved,
+  onCollectionToolRemoveFailed,
 }: PersonalCollectionsProps) => {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [selectedCollectionId, setSelectedCollectionId] = useState<
@@ -162,6 +166,12 @@ const PersonalCollections = ({
           collection={selectedCollection}
           tools={selectedCollectionTools}
           onBack={() => setSelectedCollectionId(null)}
+          onToolRemoved={(toolId) =>
+            onCollectionToolRemoved(selectedCollection._id, toolId)
+          }
+          onToolRemoveFailed={(toolId) =>
+            onCollectionToolRemoveFailed(selectedCollection._id, toolId)
+          }
         />
       ) : null}
 

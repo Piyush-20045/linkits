@@ -1,5 +1,5 @@
 "use client";
-import ToolCard from "@/components/ui/toolcard";
+import ToolCard from "@/components/tools/toolcard";
 import ToolCardSkeleton from "@/components/ui/toolcard-skeleton";
 import { DashboardEmptyState } from "../dashboard-empty-state";
 import { ArrowRightIcon, ToolCase } from "lucide-react";

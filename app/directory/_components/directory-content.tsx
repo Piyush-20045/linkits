@@ -9,7 +9,7 @@ import { useEffect, useMemo, useState } from "react";
 import { useTheme } from "next-themes";
 import { Tool } from "@/types/tool";
 import Categories from "./categories";
-import ToolCard from "@/components/ui/toolcard";
+import ToolCard from "@/components/tools/toolcard";
 import { useSession } from "next-auth/react";
 
 interface DirectoryContentProps {

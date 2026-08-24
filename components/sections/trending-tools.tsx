@@ -1,6 +1,6 @@
 "use client";
 import { useEffect, useState } from "react";
-import ToolCard from "@/components/ui/toolcard";
+import ToolCard from "@/components/tools/toolcard";
 import ToolCardSkeleton from "@/components/ui/toolcard-skeleton";
 import { Tool } from "@/types/tool";
 

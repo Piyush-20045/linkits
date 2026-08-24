@@ -2,7 +2,7 @@ import { Collection } from "@/types/collection";
 import { Tool } from "@/types/tool";
 import { ArrowLeft } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import ToolCard from "@/components/ui/toolcard";
+import ToolCard from "@/components/tools/toolcard";
 import Link from "next/link";
 
 type CollectionToolsViewProps = {

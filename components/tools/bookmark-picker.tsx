@@ -1,6 +1,7 @@
 "use client";
 
 import { Button } from "@/components/ui/button";
+import { CollectionPopout } from "@/components/tools/collection-popout";
 import { Bookmark } from "lucide-react";
 import { signIn, useSession } from "next-auth/react";
 import { toast } from "sonner";
@@ -36,6 +37,7 @@ export function BookmarkPicker({
 }: BookmarkPickerProps) {
   const { status } = useSession();
   const [isMutating, setIsMutating] = useState(false);
+  const [isPopoutOpen, setIsPopoutOpen] = useState(false);
 
   // Adds when unsaved, removes from default list AND all collections when saved
   async function toggleBookmark() {
@@ -95,12 +97,16 @@ export function BookmarkPicker({
       });
 
       if (willSave) {
-        toast.success("Saved", {
-          action: {
-            label: "Change collection",
-            onClick: () => {}, // wired up in a later step
-          },
+        const toastId = toast.success("Saved", {
           duration: 4000,
+          action: {
+            // Swaps the toast for the collection picker panel
+            label: "Change collection",
+            onClick: () => {
+              toast.dismiss(toastId);
+              setIsPopoutOpen(true);
+            },
+          },
         });
       } else if (mode === "picker") {
         toast("Removed from collections", { duration: 3000 });
@@ -120,6 +126,13 @@ export function BookmarkPicker({
 
   return (
     <div className={buttonClassName}>
+      {/* Collection picker panel opened from the toast */}
+      {isPopoutOpen && (
+        <CollectionPopout
+          toolId={toolId}
+          onClose={() => setIsPopoutOpen(false)}
+        />
+      )}
       <Button
         type="button"
         variant="ghost"

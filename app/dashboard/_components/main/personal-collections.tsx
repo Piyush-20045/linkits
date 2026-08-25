@@ -3,14 +3,13 @@ import { Collection } from "@/types/collection";
 import { CollectionEmptyState } from "../dashboard-empty-state";
 import { Folders, Plus } from "lucide-react";
 import InputModal from "../input-modal";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Tool } from "@/types/tool";
 import CollectionListView from "./collections/collection-list-view";
 import CollectionToolsView from "./collections/collection-tools-view";
 
 type PersonalCollectionsProps = {
   collections: Collection[];
-  tools: Tool[];
   onCollectionCreated: (collection: Collection) => void;
   onCollectionUpdated: (collection: Collection) => void;
   onCollectionDeleted: (collectionId: string) => void;
@@ -25,7 +24,6 @@ type CreateCollectionPayload = {
 
 const PersonalCollections = ({
   collections,
-  tools,
   onCollectionCreated,
   onCollectionUpdated,
   onCollectionDeleted,
@@ -41,19 +39,49 @@ const PersonalCollections = ({
   );
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [errorMessage, setErrorMessage] = useState("");
+  const [selectedCollectionTools, setSelectedCollectionTools] = useState<
+    Tool[]
+  >([]);
+  const [isLoadingTools, setIsLoadingTools] = useState(false);
 
   const selectedCollection = collections.find(
     (collection) => collection._id === selectedCollectionId,
   );
 
-  // Keep ID matching resilient when tool ids come as ObjectId-like values.
-  const selectedCollectionTools = selectedCollection
-    ? tools.filter((tool) =>
-        selectedCollection.toolIds
-          .map((toolId) => String(toolId))
-          .includes(String(tool._id)),
-      )
-    : [];
+  // Fetch the selected collection's tools by id. Collections can hold tools
+  // that are NOT in the default saved list, so filtering the saved-tools
+  // fetch here would silently hide them.
+  useEffect(() => {
+    if (!selectedCollection) return;
+
+    const ids = selectedCollection.toolIds
+      .map((toolId) => String(toolId))
+      .join(",");
+    let cancelled = false;
+
+    async function loadTools() {
+      setIsLoadingTools(true);
+      try {
+        const res = await fetch(`/api/tools?ids=${ids}`, {
+          cache: "no-store",
+        });
+        const data = await res.json();
+
+        if (!cancelled && res.ok) {
+          setSelectedCollectionTools(data);
+        }
+      } catch (error) {
+        console.error("Failed to fetch collection tools", error);
+      } finally {
+        if (!cancelled) setIsLoadingTools(false);
+      }
+    }
+
+    loadTools();
+    return () => {
+      cancelled = true;
+    };
+  }, [selectedCollection]);
 
   const editingInitialValues = editingCollection
     ? {
@@ -165,6 +193,7 @@ const PersonalCollections = ({
         <CollectionToolsView
           collection={selectedCollection}
           tools={selectedCollectionTools}
+          loading={isLoadingTools}
           onBack={() => setSelectedCollectionId(null)}
           onToolRemoved={(toolId) =>
             onCollectionToolRemoved(selectedCollection._id, toolId)

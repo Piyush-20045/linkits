@@ -10,16 +10,27 @@ import { toast } from "sonner";
 
 type CollectionPopoutProps = {
   toolId: string;
+  savedInDefault: boolean;
+  onDefaultChange?: (saved: boolean) => void;
   onClose: () => void;
 };
 
 // How many collections are visible before "Show more"
 const PAGE_SIZE = 5;
 
-// Centered modal for picking a destination for a saved tool.
-// Rendered via portal so the toolcards' hover-scale can't shift it around.
-export function CollectionPopout({ toolId, onClose }: CollectionPopoutProps) {
+// Centered modal for managing where a tool is saved.
+// Default bookmarks and collections are independent containers: each row
+// toggles only its own membership. Rendered via portal so the toolcards'
+// hover-scale can't shift it around.
+export function CollectionPopout({
+  toolId,
+  savedInDefault,
+  onDefaultChange,
+  onClose,
+}: CollectionPopoutProps) {
+  const [defaultSaved, setDefaultSaved] = useState(savedInDefault);
   const [collections, setCollections] = useState<Collection[]>([]);
+  const [memberships, setMemberships] = useState<Record<string, boolean>>({});
   const [hasLoaded, setHasLoaded] = useState(false);
   const [visibleCount, setVisibleCount] = useState(PAGE_SIZE);
   const [isCreating, setIsCreating] = useState(false);
@@ -46,6 +57,15 @@ export function CollectionPopout({ toolId, onClose }: CollectionPopoutProps) {
               +new Date(b.createdAt ?? 0) - +new Date(a.createdAt ?? 0),
           );
           setCollections(sorted);
+          // Which containers currently hold this tool
+          setMemberships(
+            Object.fromEntries(
+              sorted.map((c: Collection) => [
+                c._id,
+                c.toolIds?.includes(toolId) ?? false,
+              ]),
+            ),
+          );
           setHasLoaded(true);
         }
       } catch {
@@ -57,11 +77,37 @@ export function CollectionPopout({ toolId, onClose }: CollectionPopoutProps) {
     return () => {
       cancelled = true;
     };
-  }, []);
+  }, [toolId]);
 
-  // Adds the tool to the picked collection
-  async function addToCollection(collection: Collection) {
+  // Adds/removes the tool in one container without touching the others
+  async function toggleContainer(
+    target: "default" | "collection",
+    collection?: Collection,
+  ) {
     if (isMutating) return;
+
+    const wasSaved =
+      target === "default" ? defaultSaved : memberships[collection!._id];
+    const nextSaved = !wasSaved;
+
+    // Undoes local state and reports why
+    function rollback(error?: string) {
+      if (target === "default") {
+        setDefaultSaved(wasSaved);
+        onDefaultChange?.(wasSaved);
+      } else {
+        setMemberships((prev) => ({ ...prev, [collection!._id]: wasSaved }));
+      }
+      toast.error(error || "Something went wrong");
+    }
+
+    // Optimistic update
+    if (target === "default") {
+      setDefaultSaved(nextSaved);
+      onDefaultChange?.(nextSaved);
+    } else {
+      setMemberships((prev) => ({ ...prev, [collection!._id]: nextSaved }));
+    }
 
     try {
       setIsMutating(true);
@@ -70,21 +116,24 @@ export function CollectionPopout({ toolId, onClose }: CollectionPopoutProps) {
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           toolId,
-          target: "collection",
-          collectionId: collection._id,
+          target,
+          action: nextSaved ? "add" : "remove",
+          collectionId: collection?._id,
         }),
       });
 
       if (!res.ok) {
         const data = await res.json();
-        toast.error(data?.error || "Failed to add to collection");
+        rollback(data?.error);
         return;
       }
 
-      toast.success(`Added to ${collection.name}`, { duration: 4000 });
-      onClose();
+      const label = target === "default" ? "bookmarks" : collection!.name;
+      toast.success(`${nextSaved ? "Added to" : "Removed from"} ${label}`, {
+        duration: 3000,
+      });
     } catch {
-      toast.error("Failed to add to collection");
+      rollback();
     } finally {
       setIsMutating(false);
     }
@@ -145,12 +194,21 @@ export function CollectionPopout({ toolId, onClose }: CollectionPopoutProps) {
           </button>
         </div>
 
-        {/* Default bookmarks entry (already saved at this point) */}
-        <div className="flex items-center gap-2 rounded-md px-2 py-2 text-sm">
-          <Bookmark size={16} className="text-amber-500" fill="currentColor" />
+        {/* Default bookmarks container */}
+        <button
+          type="button"
+          disabled={isMutating}
+          onClick={() => void toggleContainer("default")}
+          className="flex w-full items-center gap-2 rounded-md px-2 py-2 text-left text-sm hover:bg-gray-100 disabled:opacity-50 dark:hover:bg-neutral-800"
+        >
+          <Bookmark
+            size={16}
+            className="text-amber-500"
+            fill={defaultSaved ? "currentColor" : "none"}
+          />
           <span className="flex-1">Bookmarks</span>
-          <Check size={16} className="text-emerald-500" />
-        </div>
+          {defaultSaved && <Check size={16} className="text-emerald-500" />}
+        </button>
 
         {/* Collections list */}
         {!hasLoaded ? (
@@ -168,11 +226,14 @@ export function CollectionPopout({ toolId, onClose }: CollectionPopoutProps) {
                 key={collection._id}
                 type="button"
                 disabled={isMutating}
-                onClick={() => void addToCollection(collection)}
+                onClick={() => void toggleContainer("collection", collection)}
                 className="flex w-full items-center gap-2 rounded-md px-2 py-2 text-left text-sm hover:bg-gray-100 disabled:opacity-50 dark:hover:bg-neutral-800"
               >
                 <FolderTree size={16} className="shrink-0 text-gray-500" />
-                <span className="truncate">{collection.name}</span>
+                <span className="flex-1 truncate">{collection.name}</span>
+                {memberships[collection._id] && (
+                  <Check size={16} className="shrink-0 text-emerald-500" />
+                )}
               </button>
             ))}
 

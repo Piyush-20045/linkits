@@ -154,15 +154,11 @@ export async function POST(req: Request) {
 
   if (action === "remove") {
     if (alreadySaved) {
-      // $[] (all-positional) strips the tool from every collection in one update
+      // Default bookmarks and collections are independent containers:
+      // removing from the default list leaves every collection untouched
       const updateResult = await users.updateOne(
         { email: session.user.email },
-        {
-          $pull: {
-            savedTools: { $in: toolIdVariants },
-            "collections.$[].toolIds": { $in: toolIdVariants },
-          },
-        },
+        { $pull: { savedTools: { $in: toolIdVariants } } },
       );
 
       if (updateResult.modifiedCount > 0) {

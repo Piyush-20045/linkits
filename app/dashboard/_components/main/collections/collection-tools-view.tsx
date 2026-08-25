@@ -8,6 +8,7 @@ import Link from "next/link";
 type CollectionToolsViewProps = {
   collection: Collection;
   tools: Tool[];
+  loading?: boolean;
   onBack: () => void;
   onToolRemoved: (toolId: string) => void;
   onToolRemoveFailed: (toolId: string) => void;
@@ -16,6 +17,7 @@ type CollectionToolsViewProps = {
 export default function CollectionToolsView({
   collection,
   tools,
+  loading = false,
   onBack,
   onToolRemoved,
   onToolRemoveFailed,
@@ -45,7 +47,11 @@ export default function CollectionToolsView({
       </div>
 
       {/* Saved Tools of collection */}
-      {tools.length === 0 ? (
+      {loading ? (
+        <div className="mt-4 md:mx-6 text-sm text-gray-500 dark:text-gray-400">
+          Loading tools...
+        </div>
+      ) : tools.length === 0 ? (
         <div className="rounded-xl border border-dashed border-black/15 bg-black/2 md:mx-6 mt-4 px-6 py-10 text-center dark:border-white/15 dark:bg-white/3">
           <p className="mb-4 md:text-md text-gray-600 dark:text-gray-300">
             This collection has no tools yet.

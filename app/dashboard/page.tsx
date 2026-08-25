@@ -110,7 +110,6 @@ export default function Dashboard() {
           // 2. PERSONAL COLLECTIONS
           <PersonalCollections
             collections={collections}
-            tools={tools}
             onCollectionCreated={(collection) =>
               setCollections((prev) => [collection, ...prev])
             }

@@ -39,7 +39,8 @@ export function BookmarkPicker({
   const [isMutating, setIsMutating] = useState(false);
   const [isPopoutOpen, setIsPopoutOpen] = useState(false);
 
-  // Adds when unsaved, removes from default list AND all collections when saved
+  // Adds when unsaved, removes from the default list when saved
+  // (collections are separate containers and stay untouched)
   async function toggleBookmark() {
     if (isMutating) return;
 
@@ -53,8 +54,7 @@ export function BookmarkPicker({
     const previousSaved = isSaved;
     const previousCount = count;
 
-    // Collection view -> only that collection; otherwise default list
-    // (the API also strips the tool from every collection in that case)
+    // Collection view -> only that collection; otherwise the default list
     const target = mode === "remove" && collectionId ? "collection" : "default";
 
     // Undoes optimistic updates and reports why
@@ -109,7 +109,7 @@ export function BookmarkPicker({
           },
         });
       } else if (mode === "picker") {
-        toast("Removed from collections", { duration: 3000 });
+        toast("Removed from bookmarks", { duration: 3000 });
       }
     } catch {
       rollback();
@@ -130,6 +130,10 @@ export function BookmarkPicker({
       {isPopoutOpen && (
         <CollectionPopout
           toolId={toolId}
+          savedInDefault={isSaved}
+          onDefaultChange={(saved) => {
+            onBookmarkChange?.({ saved });
+          }}
           onClose={() => setIsPopoutOpen(false)}
         />
       )}

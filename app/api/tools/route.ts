@@ -1,5 +1,6 @@
 import { NextResponse } from "next/server";
 import { getServerSession } from "next-auth";
+import { ObjectId } from "mongodb";
 import clientPromise from "@/lib/mongodb";
 import { getCategoryQueryValues } from "@/constants/categories";
 import { connectDB } from "@/lib/db";
@@ -14,6 +15,16 @@ export async function GET(req: Request) {
 
   const query: Record<string, unknown> =
     categoryValues.length > 0 ? { category: { $in: categoryValues } } : {};
+
+  // Optional ?ids=a,b,c filter: fetch only these tools (used by collection views)
+  const idsParam = searchParams.get("ids");
+  if (idsParam !== null) {
+    const idList = idsParam
+      .split(",")
+      .map((id) => id.trim())
+      .filter((id) => ObjectId.isValid(id));
+    query._id = { $in: idList };
+  }
 
   const tools = await Tool.find(query).sort({ createdAt: -1 }).lean();
   const session = await getServerSession();

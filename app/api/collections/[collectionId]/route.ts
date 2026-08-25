@@ -3,8 +3,9 @@ import { NextResponse } from "next/server";
 import { ObjectId } from "mongodb";
 import clientPromise from "@/lib/mongodb";
 
+// Next.js 16 passes dynamic route params as a Promise
 type CollectionParams = {
-  params: { collectionId: string };
+  params: Promise<{ collectionId: string }>;
 };
 
 type CollectionBody = {

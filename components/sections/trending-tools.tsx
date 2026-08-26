@@ -43,7 +43,7 @@ export default function TrendingTools() {
 
   return (
     <section className="bg-white py-20 dark:bg-black">
-      <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+      <div className="mx-auto px-4 sm:px-6 lg:px-8">
         <div className="mb-10">
           <h2 className="text-3xl font-semibold text-gray-900 dark:text-white">
             🔥 Trending Tools
@@ -58,7 +58,7 @@ export default function TrendingTools() {
             <ToolCardSkeleton count={3} />
           </div>
         ) : tools.length > 0 ? (
-          <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3">
+          <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
             {tools.map((tool) => (
               <ToolCard key={tool._id} tool={tool} />
             ))}

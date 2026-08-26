@@ -25,7 +25,7 @@ const CategoriesGrid = () => {
 
   return (
     <section className="bg-gray-50 py-20 dark:bg-black">
-      <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+      <div className="mx-auto px-4 sm:px-6 lg:px-8">
         <div className="mb-12 text-center">
           <h2 className="text-3xl font-semibold mb-6 text-gray-900 dark:text-white">
             Everything you need

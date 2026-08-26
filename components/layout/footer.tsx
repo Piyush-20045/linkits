@@ -3,7 +3,7 @@ import { FOOTER_LINKS, SOCIALS_LINKS } from "@/constants/footer-links";
 const Footer = () => {
   return (
     <footer className="border-t border-neutral-600">
-      <div className="mx-auto max-w-7xl px-4 py-4 sm:px-6 lg:px-8">
+      <div className="mx-auto px-4 py-4 sm:px-6 lg:px-8">
         <div className="flex flex-col items-center justify-between gap-6 md:flex-row">
           {/* Title and Slogan */}
           <div className="flex flex-col items-center md:items-start gap-0.5 text-gray-800 dark:text-white">

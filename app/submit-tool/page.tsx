@@ -8,6 +8,7 @@ import Navbar from "@/components/layout/navbar";
 import { Button } from "@/components/ui/button";
 import { CATEGORIES } from "@/constants/categories";
 import { Form } from "./_components/form";
+import Footer from "@/components/layout/footer";
 
 export default function SubmitToolPage() {
   const router = useRouter();
@@ -127,6 +128,8 @@ export default function SubmitToolPage() {
           )}
         </section>
       </main>
+
+      <Footer />
     </div>
   );
 }

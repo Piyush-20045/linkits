@@ -7,7 +7,7 @@ import Tool from "@/models/Tool";
 export async function GET() {
   await connectDB();
 
-  const tools = await Tool.find({}).sort({ saves: -1, createdAt: -1 }).limit(6);
+  const tools = await Tool.find({}).sort({ saves: -1, createdAt: -1 }).limit(8);
   const session = await getServerSession();
 
   if (!session) {

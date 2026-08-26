@@ -11,6 +11,7 @@ import { Tool } from "@/types/tool";
 import Categories from "./categories";
 import ToolCard from "@/components/tools/toolcard";
 import { useSession } from "next-auth/react";
+import Footer from "@/components/layout/footer";
 
 interface DirectoryContentProps {
   tools: Tool[];
@@ -120,9 +121,9 @@ export default function DirectoryContent({ tools }: DirectoryContentProps) {
     <div className="min-h-screen bg-white dark:bg-black">
       <Navbar />
 
-      <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+      <main className="mx-auto mb-8 px-4 sm:px-6 lg:px-8">
         <div className="flex flex-col gap-8 lg:flex-row">
-          <aside className="w-full shrink-0 space-y-8 lg:sticky lg:top-16 lg:max-h-[calc(100vh-6rem)] lg:w-64 lg:self-start lg:overflow-y-auto">
+          <aside className="w-full shrink-0 space-y-8 lg:sticky lg:top-16 lg:max-h-[calc(100vh-6rem)] lg:w-56 lg:self-start lg:overflow-y-auto">
             <div className="my-10">
               <h1 className="mb-2 text-4xl text-gray-900 dark:text-white">
                 Directory
@@ -160,7 +161,7 @@ export default function DirectoryContent({ tools }: DirectoryContentProps) {
             </div>
 
             {filteredTools.length > 0 ? (
-              <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3">
+              <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 md:grid-cols-3 xl:grid-cols-4">
                 {filteredTools.map((tool) => (
                   <ToolCard key={tool._id} tool={tool} />
                 ))}
@@ -185,7 +186,9 @@ export default function DirectoryContent({ tools }: DirectoryContentProps) {
             )}
           </main>
         </div>
-      </div>
+      </main>
+
+      <Footer />
     </div>
   );
 }

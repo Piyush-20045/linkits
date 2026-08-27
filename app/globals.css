@@ -158,3 +158,39 @@
     }
   }
 }
+
+/* scrollbar style updates */
+
+html {
+  scrollbar-width: thin;
+  scrollbar-color: oklch(82.665% 0.00444 16.083) white;
+}
+
+html.dark {
+  scrollbar-color: oklch(31.522% 0.00284 16.614) black;
+}
+
+html::-webkit-scrollbar {
+  width: 4px;
+}
+
+html::-webkit-scrollbar-track {
+  background: white;
+}
+
+html.dark::-webkit-scrollbar-track {
+  background: black;
+}
+
+html::-webkit-scrollbar-thumb {
+  background: oklch(0.708 0 0);
+  border-radius: 9999px;
+}
+
+html.dark::-webkit-scrollbar-thumb {
+  background: oklch(0.556 0 0);
+}
+
+html::-webkit-scrollbar-thumb:hover {
+  background: oklch(0.556 0 0);
+}

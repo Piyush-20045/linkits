@@ -1,59 +1,98 @@
-import { Book, BotMessageSquare, BriefcaseBusiness } from "lucide-react";
+"use client";
+
 import Link from "next/link";
+import Image from "next/image";
+import { Button } from "../ui/button";
+import { ArrowRight } from "lucide-react";
+
+const CATEGORIES_DATA = [
+  {
+    title: "AI Tools",
+    description: "Supercharge your workflow with AI.",
+    href: "/directory?category=ai",
+    image: "/categories/ai-tools.jpg",
+  },
+  {
+    title: "Developer Tools",
+    description: "Helpers, converters, and utilities.",
+    href: "/directory?category=utilities",
+    image: "/categories/dev-tools.jpg",
+  },
+  {
+    title: "UI / Frontend",
+    description: "Design inspiration and libraries.",
+    href: "/directory?category=ui",
+    image: "/categories/ui-frontend.jpg",
+  },
+  {
+    title: "Jobs & Career",
+    description: "Find your next role at top companies.",
+    href: "/directory?category=jobs",
+    image: "/categories/job-search.jpg",
+  },
+  // {
+  //   title: "Interview Prep",
+  //   description: "Practice and ace technical interviews.",
+  //   href: "/directory?category=interview",
+  //   image:
+  //     "https://images.unsplash.com/photo-1516321318423-f06f85e504b3?auto=format&fit=crop&w=800&q=80",
+  // },
+  // {
+  //   title: "Free Courses",
+  //   description: "Tutorials, courses, and books.",
+  //   href: "/directory?category=courses",
+  //   image:
+  //     "https://images.unsplash.com/photo-1501504905252-47347d3c3a56?auto=format&fit=crop&w=800&q=80",
+  // },
+];
 
 const CategoriesGrid = () => {
-  const CATEGORIES_DATA = [
-    {
-      title: "Jobs & Career",
-      paragraph: "Find the best platforms to land your next dream role.",
-      href: "/directory?category=jobs",
-      icon: <BriefcaseBusiness />,
-    },
-    {
-      title: "AI Tools",
-      paragraph: "Cutting-edge AI tools to supercharge your workflow.",
-      href: "/directory?category=ai",
-      icon: <BotMessageSquare />,
-    },
-    {
-      title: "Learning",
-      paragraph: "Tutorials, courses, and books to level up your skills.",
-      href: "/directory?category=courses",
-      icon: <Book />,
-    },
-  ];
-
   return (
     <section className="bg-gray-50 py-20 dark:bg-black">
-      <div className="mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="mb-12 text-center">
-          <h2 className="text-3xl font-semibold mb-6 text-gray-900 dark:text-white">
-            Everything you need
+      <div className="mx-auto max-w-360 px-4 sm:px-6 lg:px-8">
+        <div className="mb-14 text-center">
+          <h2 className="text-3xl font-semibold mb-4 text-gray-900 dark:text-white">
+            Explore categories
           </h2>
-          <p className="text-gray-500 dark:text-gray-400">
-            Browse our hand-picked collections
+          <p className="text-gray-500 dark:text-gray-400 max-w-2xl mx-auto">
+            A curated collection of tools, resources, and platforms across every
+            stage of your development journey.
           </p>
         </div>
 
-        <div className="grid grid-cols-1 gap-6 md:grid-cols-3">
-          {CATEGORIES_DATA.map((data, index) => (
+        <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-4">
+          {CATEGORIES_DATA.map((category) => (
             <Link
-              key={index}
-              href={data.href}
-              className="group block space-y-3 rounded-2xl bg-white p-8 shadow-sm transition-shadow hover:shadow-md border border-gray-100 dark:bg-neutral-950/80 dark:border-neutral-600/80 dark:hover:bg-black"
+              key={category.title}
+              href={category.href}
+              className="group relative flex flex-col justify-end overflow-hidden rounded-2xl aspect-5/3 md:aspect-6/3 lg:aspect-4/3 transition-transform duration-300 hover:scale-[1.02]"
             >
-              <div className="flex h-12 w-12 items-center justify-center rounded-lg bg-black text-white dark:bg-white dark:text-black">
-                {data.icon}
+              <Image
+                src={category.image}
+                alt={category.title}
+                fill
+                className="object-cover transition-transform duration-500 group-hover:scale-101"
+                unoptimized
+              />
+              <div className="absolute inset-0 bg-linear-to-t from-black/70 via-black/20 to-transparent dark:from-black/80 dark:via-black/30" />
+
+              <div className="relative z-10 p-6 text-white">
+                <h3 className="text-xl font-bold mb-1">{category.title}</h3>
+                <p className="text-sm text-white/80">{category.description}</p>
               </div>
-              <h3 className="text-xl font-bold text-gray-900 dark:text-white">
-                {data.title}
-              </h3>
-              <p className="text-sm text-gray-500 dark:text-gray-400">
-                {data.paragraph}
-              </p>
             </Link>
           ))}
         </div>
+
+        <Link href="/directory">
+          <Button
+            variant="secondary"
+            size="lg"
+            className="flex mx-auto mt-10 hover:bg-gray-200 dark:hover:bg-neutral-900 transition-colors"
+          >
+            Explore more categories <ArrowRight />
+          </Button>
+        </Link>
       </div>
     </section>
   );

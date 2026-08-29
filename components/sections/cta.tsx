@@ -7,7 +7,7 @@ const Cta = () => {
   return (
     <section className="relative py-16 md:py-28 overflow-hidden">
       <div className="mx-auto max-w-360 px-4 sm:px-6 lg:px-8">
-        <div className="relative grid md:grid-cols-2 gap-8 md:gap-0 items-center rounded-3xl border border-border/60 bg-card dark:bg-card/60 overflow-hidden shadow-xl">
+        <div className="relative grid md:grid-cols-2 gap-8 md:gap-0 items-center rounded-3xl border border-border/60 bg-card dark:bg-card/60 overflow-hidden shadow-md">
           <div className="absolute -top-20 -left-20 w-64 h-64 bg-primary/5 dark:bg-primary/5 rounded-full blur-3xl pointer-events-none" />
           <div className="absolute -bottom-20 -right-20 w-64 h-64 bg-accent/5 dark:bg-accent/5 rounded-full blur-3xl pointer-events-none" />
 
@@ -16,7 +16,7 @@ const Cta = () => {
               <Database className="size-4 text-blue-500" />
               Everything you need in one place
             </span>
-            <h2 className="text-3xl md:text-5xl font-semibold mb-6 text-foreground font-instrument [word-spacing:0.25rem] leading-[1.1]">
+            <h2 className="text-3xl md:text-5xl font-semibold mb-6 font-instrument text-neutral-800 dark:text-neutral-200 [word-spacing:0.25rem] leading-[1.1]">
               Build your personal{" "}
               <span className="italic text-primary">toolbox</span>.
             </h2>
@@ -36,7 +36,7 @@ const Cta = () => {
 
           <div className="relative h-72 md:h-120 hidden md:block">
             <Image
-              src="/cta/cta-light.png"
+              src="/cta/cta.png"
               alt="Linkits dashboard preview"
               fill
               className="p-4 object-cover"

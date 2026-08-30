@@ -26,9 +26,12 @@ const siteUrl = process.env.NEXT_PUBLIC_APP_URL || "http://localhost:3000";
 
 export const metadata: Metadata = {
   metadataBase: new URL(siteUrl),
-  title: "Linkits",
+  title: {
+    default: "Linkits — Curated Developer Tools & Resources",
+    template: "%s | Linkits",
+  },
   description:
-    "A simple platform to save useful links in one place and build your own private link catalogue for future reference.",
+    "Discover, save, and organize the best developer tools, resources, and platforms. Linkits is your personal toolbox for building and growing projects.",
   keywords: [
     "link manager",
     "bookmark manager",
@@ -37,20 +40,40 @@ export const metadata: Metadata = {
     "private link catalogue",
     "useful links",
     "tech resources",
+    "AI tools",
+    "developer resources",
+    "tool directory",
   ],
+  authors: [{ name: "Linkits" }],
+  creator: "Linkits",
   openGraph: {
-    title: "Linkits",
+    title: "Linkits — Curated Developer Tools & Resources",
     description:
-      "Save useful links in one place and build your own private link catalogue for future reference.",
+      "Discover, save, and organize the best developer tools, resources, and platforms.",
     url: siteUrl,
     siteName: "Linkits",
     type: "website",
+    images: [
+      {
+        url: `${siteUrl}/og-image.png`,
+        width: 1200,
+        height: 630,
+        alt: "Linkits - Curated Developer Tools",
+      },
+    ],
   },
   twitter: {
     card: "summary_large_image",
-    title: "Linkits",
+    title: "Linkits — Curated Developer Tools & Resources",
     description:
-      "Save useful links in one place and build your own private link catalogue for future reference.",
+      "Discover, save, and organize the best developer tools, resources, and platforms.",
+    images: [`${siteUrl}/og-image.png`],
+  },
+  icons: {
+    icon: "/favicon.ico",
+  },
+  verification: {
+    google: "jNxotQjuTrJu7NBPzncRXBrOMu2eXioSpqbi-69JGIk",
   },
 };
 

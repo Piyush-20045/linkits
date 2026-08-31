@@ -4,6 +4,7 @@ import "./globals.css";
 import ThemeProvider from "@/components/providers/ThemeProvider";
 import SessionProviderWrapper from "@/components/providers/SessionProviderWrapper";
 import ToasterProvider from "@/components/providers/ToasterProvider";
+import { Analytics } from "@vercel/analytics/next";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -91,6 +92,7 @@ export default function RootLayout({
           <ThemeProvider>
             {children}
             <ToasterProvider />
+            <Analytics />
           </ThemeProvider>
         </SessionProviderWrapper>
       </body>

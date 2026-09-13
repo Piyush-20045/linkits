@@ -56,7 +56,7 @@ const Navbar = () => {
         </div>
 
         {/* Right Side */}
-        <div className="flex items-center gap-4">
+        <div className="flex items-center md:gap-4 gap-2">
           <Link href="/dashboard">
             <Button
               variant="outline"
@@ -75,7 +75,10 @@ const Navbar = () => {
               <UserMenu />
             ) : (
               <Link href="/login">
-                <Button size="sm" className="border border-white">
+                <Button
+                  size="sm"
+                  className="w-12 h-7 sm:w-16 sm:h-8 text-xs sm:text-sm border border-white"
+                >
                   Login
                 </Button>
               </Link>

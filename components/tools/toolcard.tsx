@@ -49,11 +49,15 @@ export default function ToolCard({
       <div className="mb-3 flex items-start gap-3">
         <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-md border border-gray-100 bg-gray-50 font-serif text-lg font-bold text-gray-900 dark:border-gray-700 dark:bg-neutral-900 dark:text-gray-100">
           {hostname ? (
+            // unoptimized: logo.dev already serves cached, sized images —
+            // proxying 600+ of them through Vercel Image Optimization would
+            // burn quota and add latency. Browsers cache these directly.
             <Image
               src={`https://img.logo.dev/${hostname}?token=${process.env.NEXT_PUBLIC_LOGO_DEV_KEY}`}
               alt={tool.title}
               width={38}
               height={38}
+              unoptimized
               className="object-contain rounded-md"
             />
           ) : (

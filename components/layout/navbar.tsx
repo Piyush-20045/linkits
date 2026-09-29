@@ -49,7 +49,20 @@ function MobileCategoryItem({
 }
 
 // Category index for the mobile menu. Counts load lazily on first open via
-// the tiny /api/category-counts endpoint — nothing fetched until needed.
+// the tiny /api/category-counts endpoint — nothing fetched until needed,
+// then reused for the rest of the session.
+let countsPromise: Promise<Record<string, number>> | null = null;
+
+function getCategoryCounts(): Promise<Record<string, number>> {
+  if (!countsPromise) {
+    countsPromise = fetch("/api/category-counts")
+      .then((res) => res.json())
+      .then((data) => data.counts ?? {})
+      .catch(() => ({}));
+  }
+  return countsPromise;
+}
+
 function MobileCategoryMenu({
   open,
   onNavigate,
@@ -66,19 +79,11 @@ function MobileCategoryMenu({
 
     let cancelled = false;
 
-    async function loadCounts() {
-      try {
-        const res = await fetch("/api/category-counts");
-        const data = await res.json();
-        if (!cancelled) {
-          setCounts(data.counts ?? {});
-        }
-      } catch {
-        // Counts stay hidden; categories still work.
+    getCategoryCounts().then((loaded) => {
+      if (!cancelled) {
+        setCounts(loaded);
       }
-    }
-
-    loadCounts();
+    });
 
     return () => {
       cancelled = true;

@@ -156,17 +156,6 @@ export default function DirectoryContent({ tools }: DirectoryContentProps) {
           </aside>
 
           <div className="min-w-0 flex-1">
-
-            {/* Mobile categories */}
-            <div className="sticky top-16 z-40 -mx-4 border-b border-neutral-300 dark:border-neutral-800 bg-white/95 px-4 py-2 backdrop-blur-md dark:bg-black/95 sm:-mx-6 sm:px-6 lg:hidden">
-              <Categories
-                selectedCategory={selectedCategory}
-                onCategoryChange={handleCategoryChange}
-                counts={categoryCounts}
-                total={toolsWithSavedState.length}
-              />
-            </div>
-
             <h1 className="sr-only">Directory</h1>
 
             <div className="mt-6 mb-12 lg:my-10">

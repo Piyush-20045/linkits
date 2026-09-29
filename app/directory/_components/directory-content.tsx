@@ -85,8 +85,16 @@ export default function DirectoryContent({ tools }: DirectoryContentProps) {
     });
   }, [tools, savedToolsMap, status]);
 
-  const filteredTools = useMemo(() => {
-    return toolsWithSavedState.filter((tool) => {
+  const categoryCounts = useMemo(() => {
+    const map: Record<string, number> = {};
+    for (const tool of toolsWithSavedState) {
+      const value = normalizeCategoryValue(tool.category);
+      map[value] = (map[value] ?? 0) + 1;
+    }
+    return map;
+  }, [toolsWithSavedState]);
+
+  const filteredTools = useMemo(() => {    return toolsWithSavedState.filter((tool) => {
       const matchesSearch =
         tool.title.toLowerCase().includes(search.toLowerCase()) ||
         tool.description.toLowerCase().includes(search.toLowerCase()) ||
@@ -123,18 +131,9 @@ export default function DirectoryContent({ tools }: DirectoryContentProps) {
 
       <main className="mx-auto mb-8 px-4 sm:px-6 lg:px-8">
         <div className="flex flex-col lg:flex-row lg:gap-8">
-          <aside className="w-full shrink-0 space-y-4 lg:sticky lg:top-16 lg:max-h-[calc(100vh-6rem)] lg:w-56 lg:self-start lg:overflow-y-auto">
-            <div className="mt-8 mb-4">
-              <h1 className="mb-2 text-3xl text-gray-900 dark:text-white">
-                Directory
-              </h1>
-              <p className="text-gray-500 dark:text-gray-400">
-                Explore curated developer resources.
-              </p>
-            </div>
-
+          <aside className="w-full shrink-0 space-y-4 lg:sticky lg:top-16 lg:max-h-[calc(100vh-6rem)] lg:w-56 lg:self-start lg:overflow-y-auto lg:pt-10 [-ms-overflow-style:none] [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
             {/* Search input */}
-            <div className="relative overflow-hidden">
+            <div className="mt-4 lg:mt-0 relative overflow-hidden">
               <ShineBorder
                 shineColor={theme.theme === "dark" ? "white" : "black"}
               />
@@ -150,6 +149,8 @@ export default function DirectoryContent({ tools }: DirectoryContentProps) {
               <Categories
                 selectedCategory={selectedCategory}
                 onCategoryChange={handleCategoryChange}
+                counts={categoryCounts}
+                total={toolsWithSavedState.length}
               />
             </div>
           </aside>
@@ -161,8 +162,12 @@ export default function DirectoryContent({ tools }: DirectoryContentProps) {
               <Categories
                 selectedCategory={selectedCategory}
                 onCategoryChange={handleCategoryChange}
+                counts={categoryCounts}
+                total={toolsWithSavedState.length}
               />
             </div>
+
+            <h1 className="sr-only">Directory</h1>
 
             <div className="mt-6 mb-12 lg:my-10">
               <div className="mb-4 text-sm text-gray-500 dark:text-gray-400">

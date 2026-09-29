@@ -3,7 +3,7 @@ import { Button } from "@/components/ui/button";
 import { getCategoryLabel } from "@/constants/categories";
 import { Tool } from "@/types/tool";
 import Image from "next/image";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { BookmarkPicker } from "./bookmark-picker";
 
 interface ToolCardProps {
@@ -22,13 +22,14 @@ export default function ToolCard({
   onRemoveFailed,
 }: ToolCardProps) {
   const categoryLabel = getCategoryLabel(tool.category);
-  const [isSaved, setIsSaved] = useState(tool.saved ?? false);
-  const [bookmarkCount, setBookmarkCount] = useState(tool.saves ?? 0);
-
-  useEffect(() => {
-    setIsSaved(tool.saved ?? false);
-    setBookmarkCount(tool.saves ?? 0);
-  }, [tool.saved, tool.saves]);
+  // Local override for instant bookmark UI; falls back to server props.
+  // No sync effect needed — the parent remounts per tool via key={tool._id}.
+  const [override, setOverride] = useState<{
+    saved?: boolean;
+    saves?: number;
+  } | null>(null);
+  const isSaved = override?.saved ?? tool.saved ?? false;
+  const bookmarkCount = override?.saves ?? tool.saves ?? 0;
 
   const getHostname = (url: string) => {
     try {
@@ -38,7 +39,9 @@ export default function ToolCard({
       return "";
     }
   };
-  const hostname = getHostname(tool.url);
+  // New data ships a `logo` hostname; fall back to parsing the URL.
+  const hostname = tool.logo?.trim() || getHostname(tool.url);
+  const tags = tool.tags ?? [];
 
   return (
     <div className="group relative flex flex-col rounded-md border border-gray-200 bg-gray-50 p-5 transition-all hover:border-gray-300 hover:shadow-sm dark:border-gray-800 dark:bg-neutral-900/80 dark:hover:border-gray-700 hover:scale-101">
@@ -85,9 +88,9 @@ export default function ToolCard({
       </p>
 
       {/* Tags */}
-      {tool.tags.length > 0 && (
+      {tags.length > 0 && (
         <div className="mb-4 flex flex-wrap gap-2">
-          {tool.tags.slice(0, 3).map((tag) => (
+          {tags.slice(0, 3).map((tag) => (
             <span
               key={tag}
               className="rounded-sm border border-gray-300 bg-gray-100 px-2 py-1 text-[10px] text-gray-500 dark:border-gray-700 dark:bg-neutral-900 dark:text-gray-400"
@@ -123,11 +126,11 @@ export default function ToolCard({
           onRemoved={onRemoved}
           onRemoveFailed={onRemoveFailed}
           onBookmarkChange={({ saved, saves }) => {
-            if (typeof saved === "boolean") {
-              setIsSaved(saved);
-            }
-            if (typeof saves === "number") {
-              setBookmarkCount(saves);
+            if (typeof saved === "boolean" || typeof saves === "number") {
+              setOverride((prev) => ({
+                saved: typeof saved === "boolean" ? saved : (prev?.saved ?? isSaved),
+                saves: typeof saves === "number" ? saves : (prev?.saves ?? bookmarkCount),
+              }));
             }
           }}
         />

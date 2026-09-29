@@ -9,7 +9,7 @@ const CATEGORIES_DATA = [
   {
     title: "AI Tools",
     description: "Supercharge your workflow with AI.",
-    href: "/directory?category=ai",
+    href: "/directory?category=ai-tools",
     image: "/categories/ai-tools.jpg",
   },
   {
@@ -21,13 +21,13 @@ const CATEGORIES_DATA = [
   {
     title: "UI / Frontend",
     description: "Design inspiration and libraries.",
-    href: "/directory?category=ui",
+    href: "/directory?category=design",
     image: "/categories/ui-frontend.jpg",
   },
   {
     title: "Jobs & Career",
     description: "Find your next role at top companies.",
-    href: "/directory?category=jobs",
+    href: "/directory?category=jobs-and-career",
     image: "/categories/job-search.jpg",
   },
   // {

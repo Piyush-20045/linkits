@@ -40,7 +40,7 @@ const Navbar = () => {
                 Categories
                 <ChevronDown size={18} className="opacity-50" />
               </button>
-              <div className="absolute left-0 top-full mt-2 w-48 origin-top-left rounded-lg border border-gray-200 bg-white p-2 shadow-lg opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200 dark:border-neutral-800 dark:bg-neutral-950">
+              <div className="absolute left-0 top-full mt-2 w-48 origin-top-left rounded-lg border border-gray-200 bg-white p-2 shadow-lg opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200 dark:border-neutral-800 dark:bg-neutral-950 max-h-96 overflow-y-auto [scrollbar-width:1px]">
                 {CATEGORIES.map((cat) => (
                   <Link
                     key={cat.value}

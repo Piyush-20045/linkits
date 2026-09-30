@@ -6,6 +6,8 @@ import { ShineBorder } from "@/components/ui/shine-border";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { useEffect, useMemo, useRef, useState } from "react";
+import Link from "next/link";
+import { Plus } from "lucide-react";
 import { useTheme } from "next-themes";
 import { Tool } from "@/types/tool";
 import Categories from "./categories";
@@ -167,11 +169,11 @@ export default function DirectoryContent({ tools }: DirectoryContentProps) {
     <div className="min-h-screen bg-white dark:bg-black">
       <Navbar />
 
-      <main className="mx-auto mb-8 px-4 sm:px-6 lg:px-8">
-        <div className="flex flex-col lg:flex-row lg:gap-8">
-          <aside className="w-full shrink-0 space-y-4 lg:sticky lg:top-16 lg:max-h-[calc(100vh-6rem)] lg:w-56 lg:self-start lg:overflow-y-auto lg:pt-10 [-ms-overflow-style:none] [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
+      <main className="mx-auto mb-8 px-4 sm:px-6 lg:px-0">
+        <div className="flex flex-col lg:flex-row">
+          <aside className="w-full shrink-0 lg:sticky lg:top-16 lg:flex lg:h-[calc(100dvh-4rem)] lg:w-60 lg:flex-col lg:border-r lg:border-neutral-600">
             {/* Search input */}
-            <div className="mt-4 lg:mt-0 relative overflow-hidden">
+            <div className="relative mt-4 overflow-hidden rounded-md lg:mx-4 lg:mt-6">
               <ShineBorder
                 shineColor={theme.theme === "dark" ? "white" : "black"}
               />
@@ -185,8 +187,8 @@ export default function DirectoryContent({ tools }: DirectoryContentProps) {
               />
             </div>
 
-            {/* Desktop categories */}
-            <div className="hidden lg:block">
+            {/* Desktop categories — scrolls between search and submit */}
+            <div className="hidden lg:block lg:min-h-0 lg:flex-1 lg:overflow-y-auto lg:px-4 lg:py-4 [-ms-overflow-style:none] [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
               <Categories
                 selectedCategory={selectedCategory}
                 onCategoryChange={handleCategoryChange}
@@ -194,12 +196,22 @@ export default function DirectoryContent({ tools }: DirectoryContentProps) {
                 total={toolsWithSavedState.length}
               />
             </div>
+
+            {/* Pinned submit */}
+            {/* <div className="hidden lg:block lg:border-t lg:border-neutral-600">
+              <Link href="/submit-tool">
+                <Button variant="secondary" className="w-full cursor-pointer gap-2">
+                  <Plus size={16} />
+                  Submit Tool
+                </Button>
+              </Link>
+            </div> */}
           </aside>
 
           <div className="min-w-0 flex-1">
             <h1 className="sr-only">Directory</h1>
 
-            <div className="mt-6 mb-12 lg:my-10">
+            <div className="mt-6 mb-12 lg:my-6 lg:px-6">
               <div className="mb-4 text-sm text-gray-500 dark:text-gray-400">
                 Showing {visibleTools.length} of {filteredTools.length} results
               </div>

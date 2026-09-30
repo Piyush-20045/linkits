@@ -118,7 +118,7 @@ export function BookmarkPicker({
     }
   }
 
-  const buttonClassName = `ml-3 inline-flex h-8 items-center overflow-hidden rounded-full border bg-white text-gray-500 dark:bg-neutral-950 dark:text-gray-400 ${
+  const buttonClassName = `ml-3 inline-flex h-8 items-center overflow-hidden rounded-full border ${
     isSaved
       ? "border-green-300 dark:border-green-500/20"
       : "border-neutral-200 dark:border-neutral-800"
@@ -138,14 +138,12 @@ export function BookmarkPicker({
         />
       )}
       <Button
-        type="button"
-        variant="ghost"
-        size="icon"
+        variant="outline"
         disabled={isMutating}
         onClick={() => {
           void toggleBookmark();
         }}
-        className="h-9 w-9 rounded-none border-0 bg-transparent text-gray-500 shadow-none hover:bg-gray-100 hover:text-gray-600 dark:text-gray-400 dark:hover:bg-gray-500/10 dark:hover:text-gray-500"
+        className="rounded-none border-0 bg-transparent text-gray-500 dark:text-gray-400 shadow-none dark:hover:text-white cursor-pointer"
         aria-label={
           collectionId
             ? "Remove from collection"
@@ -154,11 +152,8 @@ export function BookmarkPicker({
               : "Save tool"
         }
       >
-        <Bookmark size={18} fill={isSaved ? "currentColor" : "none"} />
+        <Bookmark size={18} fill={isSaved ? "currentColor" : "none"} /> {count}
       </Button>
-      <span className="border-l border-current/10 px-2.5 text-sm font-semibold">
-        {count}
-      </span>
     </div>
   );
 }

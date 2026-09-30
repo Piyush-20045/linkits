@@ -18,7 +18,9 @@ const SavedCollections = ({ tools }: { tools: Tool[] }) => {
           }}
         />
       ) : (
-        <div>this is the saved collections</div>
+        <div className="p-6 mt-12 text-center border">
+          THIS FEATURE IS YET TO ARRIVE!!
+        </div>
       )}
     </div>
   );

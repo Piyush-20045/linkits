@@ -5,7 +5,7 @@ import { normalizeCategoryValue } from "@/constants/categories";
 import { ShineBorder } from "@/components/ui/shine-border";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { useTheme } from "next-themes";
 import { Tool } from "@/types/tool";
 import Categories from "./categories";
@@ -17,6 +17,10 @@ interface DirectoryContentProps {
   tools: Tool[];
 }
 
+// Cards mounted at once. Small enough for instant theme switches and first
+// paint, large enough to fill tall screens — the rest loads on scroll.
+const PAGE_SIZE = 28;
+
 export default function DirectoryContent({ tools }: DirectoryContentProps) {
   const router = useRouter();
   const pathname = usePathname();
@@ -26,6 +30,8 @@ export default function DirectoryContent({ tools }: DirectoryContentProps) {
 
   const [search, setSearch] = useState("");
   const [savedTools, setSavedTools] = useState<Tool[]>([]);
+  const [visibleCount, setVisibleCount] = useState(PAGE_SIZE);
+  const sentinelRef = useRef<HTMLDivElement | null>(null);
   const selectedCategory = normalizeCategoryValue(searchParams.get("category"));
 
   useEffect(() => {
@@ -94,7 +100,8 @@ export default function DirectoryContent({ tools }: DirectoryContentProps) {
     return map;
   }, [toolsWithSavedState]);
 
-  const filteredTools = useMemo(() => {    return toolsWithSavedState.filter((tool) => {
+  const filteredTools = useMemo(() => {
+    return toolsWithSavedState.filter((tool) => {
       const matchesSearch =
         tool.title.toLowerCase().includes(search.toLowerCase()) ||
         tool.description.toLowerCase().includes(search.toLowerCase()) ||
@@ -110,7 +117,38 @@ export default function DirectoryContent({ tools }: DirectoryContentProps) {
     });
   }, [toolsWithSavedState, search, selectedCategory]);
 
+  const visibleTools = useMemo(
+    () => filteredTools.slice(0, visibleCount),
+    [filteredTools, visibleCount],
+  );
+  const hasMore = visibleCount < filteredTools.length;
+
+  // Auto-load the next page when the sentinel scrolls into view.
+  useEffect(() => {
+    const sentinel = sentinelRef.current;
+    if (!sentinel || !hasMore) return;
+
+    const observer = new IntersectionObserver(
+      (entries) => {
+        if (entries[0].isIntersecting) {
+          setVisibleCount((count) =>
+            Math.min(count + PAGE_SIZE, filteredTools.length),
+          );
+        }
+      },
+      { rootMargin: "400px" },
+    );
+
+    observer.observe(sentinel);
+    return () => observer.disconnect();
+  }, [hasMore, filteredTools.length]);
+
+  function resetVisible() {
+    setVisibleCount(PAGE_SIZE);
+  }
+
   function handleCategoryChange(category: string) {
+    resetVisible();
     const nextSearchParams = new URLSearchParams(searchParams.toString());
 
     if (category === "all") {
@@ -140,7 +178,10 @@ export default function DirectoryContent({ tools }: DirectoryContentProps) {
               <Input
                 placeholder="Search tools..."
                 value={search}
-                onChange={(e) => setSearch(e.target.value)}
+                onChange={(e) => {
+                  setSearch(e.target.value);
+                  resetVisible();
+                }}
               />
             </div>
 
@@ -160,16 +201,38 @@ export default function DirectoryContent({ tools }: DirectoryContentProps) {
 
             <div className="mt-6 mb-12 lg:my-10">
               <div className="mb-4 text-sm text-gray-500 dark:text-gray-400">
-                Showing {filteredTools.length} results
+                Showing {visibleTools.length} of {filteredTools.length} results
               </div>
 
               {/* Tools grid */}
               {filteredTools.length > 0 ? (
-                <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 md:grid-cols-3 xl:grid-cols-4">
-                  {filteredTools.map((tool) => (
-                    <ToolCard key={tool._id} tool={tool} />
-                  ))}
-                </div>
+                <>
+                  <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 md:grid-cols-3 xl:grid-cols-4">
+                    {visibleTools.map((tool) => (
+                      <ToolCard key={tool._id} tool={tool} />
+                    ))}
+                  </div>
+                  {hasMore && (
+                    <div className="mt-8 flex flex-col items-center gap-4">
+                      <div
+                        ref={sentinelRef}
+                        className="h-1 w-1"
+                        aria-hidden="true"
+                      />
+                      <Button
+                        variant="secondary"
+                        onClick={() =>
+                          setVisibleCount((count) =>
+                            Math.min(count + PAGE_SIZE, filteredTools.length),
+                          )
+                        }
+                      >
+                        Load more ({filteredTools.length - visibleTools.length}{" "}
+                        remaining)
+                      </Button>
+                    </div>
+                  )}
+                </>
               ) : (
                 <div className="rounded-xl border border-dashed border-gray-300 bg-gray-50 py-20 text-center dark:border-gray-700 dark:bg-neutral-900">
                   <h3 className="mb-2 font-serif text-xl text-gray-900 dark:text-white">

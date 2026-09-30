@@ -44,7 +44,7 @@ export default function ToolCard({
   const tags = tool.tags ?? [];
 
   return (
-    <div className="group relative flex flex-col rounded-md border border-gray-200 bg-gray-50 p-5 transition-all hover:border-gray-300 hover:shadow-sm dark:border-gray-800 dark:bg-neutral-900/80 dark:hover:border-gray-700 hover:scale-101">
+    <div className="group relative flex flex-col rounded-md border border-gray-200 bg-gray-50 p-5 hover:border-gray-300 hover:shadow-sm dark:border-gray-800 dark:bg-neutral-900/80 dark:hover:border-gray-700 hover:scale-101">
       {/* Header */}
       <div className="mb-3 flex items-start gap-3">
         <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-md border border-gray-100 bg-gray-50 font-serif text-lg font-bold text-gray-900 dark:border-gray-700 dark:bg-neutral-900 dark:text-gray-100">
@@ -116,7 +116,7 @@ export default function ToolCard({
           <Button
             variant="secondary"
             size="sm"
-            className="w-full transition-colors border bg-gray-200 dark:bg-neutral-950/40 group-hover:bg-gray-400/50 dark:group-hover:bg-neutral-950 cursor-pointer"
+            className="w-full border bg-gray-200 dark:bg-neutral-950/40 group-hover:bg-gray-400/50 dark:group-hover:bg-neutral-950 cursor-pointer"
           >
             Visit Site
           </Button>
@@ -132,8 +132,12 @@ export default function ToolCard({
           onBookmarkChange={({ saved, saves }) => {
             if (typeof saved === "boolean" || typeof saves === "number") {
               setOverride((prev) => ({
-                saved: typeof saved === "boolean" ? saved : (prev?.saved ?? isSaved),
-                saves: typeof saves === "number" ? saves : (prev?.saves ?? bookmarkCount),
+                saved:
+                  typeof saved === "boolean" ? saved : (prev?.saved ?? isSaved),
+                saves:
+                  typeof saves === "number"
+                    ? saves
+                    : (prev?.saves ?? bookmarkCount),
               }));
             }
           }}

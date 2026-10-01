@@ -11,13 +11,13 @@ export const SOCIALS_LINKS = [
     id: 2,
     name: "GMAIL",
     icon: <Mail size={14} />,
-    href: "mailto:py624833@gmail.com",
+    href: "mailto:piyushyadav20045@gmail.com",
   },
   {
     id: 3,
     name: "GITHUB",
     icon: <Github size={14} />,
-    href: "https://github.com/Piyush-20045/linkits",
+    href: "https://github.com/Piyush-20045/",
   },
 ];
 

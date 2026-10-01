@@ -7,6 +7,14 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { useEffect, useMemo, useRef, useState } from "react";
 import posthog from "posthog-js";
+import { ArrowUpDown } from "lucide-react";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuRadioGroup,
+  DropdownMenuRadioItem,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
 import { useTheme } from "next-themes";
 import { Tool } from "@/types/tool";
 import Categories from "./categories";
@@ -22,6 +30,14 @@ interface DirectoryContentProps {
 // paint, large enough to fill tall screens — the rest loads on scroll.
 const PAGE_SIZE = 28;
 
+type SortKey = "newest" | "saved" | "az";
+
+const SORT_LABELS: Record<SortKey, string> = {
+  newest: "Newest",
+  saved: "Most Saved",
+  az: "A–Z",
+};
+
 export default function DirectoryContent({ tools }: DirectoryContentProps) {
   const router = useRouter();
   const pathname = usePathname();
@@ -32,7 +48,9 @@ export default function DirectoryContent({ tools }: DirectoryContentProps) {
   const [search, setSearch] = useState("");
   const [savedTools, setSavedTools] = useState<Tool[]>([]);
   const [visibleCount, setVisibleCount] = useState(PAGE_SIZE);
+  const [sort, setSort] = useState<SortKey>("newest");
   const sentinelRef = useRef<HTMLDivElement | null>(null);
+  const resultsRef = useRef<HTMLDivElement | null>(null);
   const selectedCategory = normalizeCategoryValue(searchParams.get("category"));
 
   useEffect(() => {
@@ -118,11 +136,24 @@ export default function DirectoryContent({ tools }: DirectoryContentProps) {
     });
   }, [toolsWithSavedState, search, selectedCategory]);
 
+  // Server already sends newest-first, so "newest" needs no re-sorting.
+  const sortedTools = useMemo(() => {
+    if (sort === "saved") {
+      return [...filteredTools].sort(
+        (a, b) => (b.saves ?? 0) - (a.saves ?? 0),
+      );
+    }
+    if (sort === "az") {
+      return [...filteredTools].sort((a, b) => a.title.localeCompare(b.title));
+    }
+    return filteredTools;
+  }, [filteredTools, sort]);
+
   const visibleTools = useMemo(
-    () => filteredTools.slice(0, visibleCount),
-    [filteredTools, visibleCount],
+    () => sortedTools.slice(0, visibleCount),
+    [sortedTools, visibleCount],
   );
-  const hasMore = visibleCount < filteredTools.length;
+  const hasMore = visibleCount < sortedTools.length;
 
   // Auto-load the next page when the sentinel scrolls into view.
   useEffect(() => {
@@ -133,7 +164,7 @@ export default function DirectoryContent({ tools }: DirectoryContentProps) {
       (entries) => {
         if (entries[0].isIntersecting) {
           setVisibleCount((count) =>
-            Math.min(count + PAGE_SIZE, filteredTools.length),
+            Math.min(count + PAGE_SIZE, sortedTools.length),
           );
         }
       },
@@ -142,10 +173,16 @@ export default function DirectoryContent({ tools }: DirectoryContentProps) {
 
     observer.observe(sentinel);
     return () => observer.disconnect();
-  }, [hasMore, filteredTools.length]);
+  }, [hasMore, sortedTools.length]);
 
   function resetVisible() {
     setVisibleCount(PAGE_SIZE);
+  }
+
+  function handleSortChange(value: string) {
+    setSort(value as SortKey);
+    resetVisible();
+    resultsRef.current?.scrollIntoView({ behavior: "smooth", block: "start" });
   }
 
   function handleCategoryChange(category: string) {
@@ -223,9 +260,35 @@ export default function DirectoryContent({ tools }: DirectoryContentProps) {
           <div className="min-w-0 flex-1">
             <h1 className="sr-only">Directory</h1>
 
-            <div className="mt-6 mb-12 lg:my-6 lg:px-6">
-              <div className="mb-4 text-sm text-gray-500 dark:text-gray-400">
-                Showing {visibleTools.length} of {filteredTools.length} results
+            <div className="mt-6 mb-12 lg:my-6 lg:px-6" ref={resultsRef}>
+              <div className="mb-4 flex items-center justify-between gap-3">
+                <p className="text-sm text-gray-500 dark:text-gray-400">
+                  Showing {visibleTools.length} of {filteredTools.length} results
+                </p>
+                <DropdownMenu>
+                  <DropdownMenuTrigger asChild>
+                    <Button
+                      variant="secondary"
+                      size="sm"
+                      className="shrink-0 cursor-pointer gap-2"
+                    >
+                      <ArrowUpDown size={14} />
+                      {SORT_LABELS[sort]}
+                    </Button>
+                  </DropdownMenuTrigger>
+                  <DropdownMenuContent align="end">
+                    <DropdownMenuRadioGroup
+                      value={sort}
+                      onValueChange={handleSortChange}
+                    >
+                      {(Object.keys(SORT_LABELS) as SortKey[]).map((key) => (
+                        <DropdownMenuRadioItem key={key} value={key}>
+                          {SORT_LABELS[key]}
+                        </DropdownMenuRadioItem>
+                      ))}
+                    </DropdownMenuRadioGroup>
+                  </DropdownMenuContent>
+                </DropdownMenu>
               </div>
 
               {/* Tools grid */}
@@ -247,11 +310,11 @@ export default function DirectoryContent({ tools }: DirectoryContentProps) {
                         variant="secondary"
                         onClick={() =>
                           setVisibleCount((count) =>
-                            Math.min(count + PAGE_SIZE, filteredTools.length),
+                            Math.min(count + PAGE_SIZE, sortedTools.length),
                           )
                         }
                       >
-                        Load more ({filteredTools.length - visibleTools.length}{" "}
+                        Load more ({sortedTools.length - visibleTools.length}{" "}
                         remaining)
                       </Button>
                     </div>

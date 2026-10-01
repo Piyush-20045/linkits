@@ -54,9 +54,9 @@ export async function POST(req: Request) {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   }
 
-  const { title, url, description, category, tags } = await req.json();
+  const { title, url, category } = await req.json();
 
-  if (!title || !url || !description || !category) {
+  if (!title || !url || !category) {
     return NextResponse.json(
       { error: "Missing required fields" },
       { status: 400 },
@@ -65,28 +65,59 @@ export async function POST(req: Request) {
 
   await connectDB();
 
-  const existingTool = await Tool.findOne({ url });
+  // Heads-up for review, not a blocker — suggestions never write to the DB.
+  const existingTool = await Tool.findOne({ url }).lean();
 
-  if (existingTool) {
+  const botToken = process.env.TELEGRAM_BOT_TOKEN?.trim();
+  const chatId = process.env.TELEGRAM_CHAT_ID?.trim();
+
+  if (!botToken || !chatId) {
+    console.error("Telegram env vars missing — suggestion not sent:", {
+      title,
+      url,
+      category,
+    });
     return NextResponse.json(
-      { error: "Tool already exists" },
-      { status: 409 },
+      { error: "Suggestion service is not configured. Try again later." },
+      { status: 503 },
     );
   }
 
-  const tool = await Tool.create({
-    title,
-    url,
-    description,
-    category,
-    tags: Array.isArray(tags) ? tags : [],
-    submittedBy: session.user.email,
-    source: "community",
-  });
+  const text = [
+    "🔧 <b>New tool suggestion</b>",
+    `<b>${escapeHtml(String(title))}</b>`,
+    escapeHtml(String(url)),
+    `Category: ${escapeHtml(String(category))}`,
+    `By: ${escapeHtml(session.user.email)}`,
+    existingTool ? "⚠️ Already in directory" : "✅ Not in directory",
+  ].join("\n");
+
+  const telegramRes = await fetch(
+    `https://api.telegram.org/bot${botToken}/sendMessage`,
+    {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ chat_id: chatId, text, parse_mode: "HTML" }),
+    },
+  );
+
+  if (!telegramRes.ok) {
+    console.error("Telegram send failed:", await telegramRes.text());
+    return NextResponse.json(
+      { error: "Could not send suggestion. Try again later." },
+      { status: 502 },
+    );
+  }
 
   return NextResponse.json({
     success: true,
-    message: "Tool submitted successfully",
-    tool,
+    message: "Thanks! We'll review your suggestion.",
   });
+}
+
+function escapeHtml(value: string) {
+  return value
+    .replace(/&/g, "&amp;")
+    .replace(/</g, "&lt;")
+    .replace(/>/g, "&gt;");
 }

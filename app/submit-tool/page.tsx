@@ -16,9 +16,7 @@ export default function SubmitToolPage() {
 
   const [title, setTitle] = useState("");
   const [url, setUrl] = useState("");
-  const [description, setDescription] = useState("");
   const [category, setCategory] = useState<string>(CATEGORIES[0].label);
-  const [tags, setTags] = useState("");
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [error, setError] = useState("");
 
@@ -33,16 +31,7 @@ export default function SubmitToolPage() {
         headers: {
           "Content-Type": "application/json",
         },
-        body: JSON.stringify({
-          title,
-          url,
-          description,
-          category,
-          tags: tags
-            .split(",")
-            .map((tag) => tag.trim())
-            .filter(Boolean),
-        }),
+        body: JSON.stringify({ title, url, category }),
       });
 
       const data = await res.json();
@@ -51,7 +40,9 @@ export default function SubmitToolPage() {
         throw new Error(data.error || "Failed to submit tool");
       }
 
-      toast.success(data.message || "Tool submitted successfully");
+      toast.success(data.message || "Suggestion sent for review", {
+        position: "top-center",
+      });
       router.push("/directory");
     } catch (error) {
       const message =
@@ -73,9 +64,10 @@ export default function SubmitToolPage() {
       <main className="mx-auto max-w-3xl px-4 py-10 sm:px-6 lg:px-8">
         <section className="rounded-lg border border-gray-200 bg-gray-50 p-6 dark:border-gray-800 dark:bg-neutral-950 sm:p-8">
           <div className="mb-8">
-            <h1 className="text-3xl font-semibold">Submit Tool</h1>
+            <h1 className="text-3xl font-semibold">Suggest a Tool</h1>
             <p className="mt-2 text-sm text-gray-500 dark:text-gray-400">
-              Share a useful tool with the Linkits directory.
+              Send us a name, link, and category — we review every suggestion
+              and add the good ones ourselves.
             </p>
           </div>
 
@@ -85,11 +77,10 @@ export default function SubmitToolPage() {
                 <ShieldCheck size={16} />
               </span>
               <div>
-                <h2 className="text-sm font-semibold">Quick request</h2>
+                <h2 className="text-sm font-semibold">How it works</h2>
                 <p className="mt-1 text-sm text-gray-500 dark:text-gray-400">
-                  Please submit genuine and useful websites only. Clear
-                  descriptions and accurate tags make the directory better for
-                  everyone.
+                  Suggest a genuine, useful website. We personally review each
+                  suggestion before adding it to the directory.
                 </p>
               </div>
             </div>
@@ -113,16 +104,12 @@ export default function SubmitToolPage() {
             <Form
               title={title}
               url={url}
-              description={description}
               category={category}
-              tags={tags}
               error={error}
               isSubmitting={isSubmitting}
               onTitleChange={setTitle}
               onUrlChange={setUrl}
-              onDescriptionChange={setDescription}
               onCategoryChange={setCategory}
-              onTagsChange={setTags}
               onSubmit={handleSubmit}
             />
           )}

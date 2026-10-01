@@ -6,6 +6,7 @@ import { ShineBorder } from "@/components/ui/shine-border";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { useEffect, useMemo, useRef, useState } from "react";
+import posthog from "posthog-js";
 import { useTheme } from "next-themes";
 import { Tool } from "@/types/tool";
 import Categories from "./categories";
@@ -170,8 +171,21 @@ export default function DirectoryContent({ tools }: DirectoryContentProps) {
       <main className="mx-auto mb-8 px-4 sm:px-6 lg:px-0">
         <div className="flex flex-col lg:flex-row">
           <aside className="w-full shrink-0 lg:sticky lg:top-16 lg:flex lg:h-[calc(100dvh-4rem)] lg:w-61 lg:flex-col lg:border-r lg:border-neutral-600">
-            {/* Search input */}
-            <div className="relative mt-4 overflow-hidden rounded-md lg:mx-4 lg:mt-6">
+            {/* Search input — Enter submits for analytics; filtering stays live */}
+            <form
+              className="relative mt-4 overflow-hidden rounded-md lg:mx-4 lg:mt-6"
+              onSubmit={(e) => {
+                e.preventDefault();
+                if (
+                  process.env.NEXT_PUBLIC_POSTHOG_KEY &&
+                  search.trim().length > 0
+                ) {
+                  posthog.capture("search_used", {
+                    query_length: search.trim().length,
+                  });
+                }
+              }}
+            >
               <ShineBorder
                 shineColor={theme.theme === "dark" ? "white" : "black"}
               />
@@ -183,7 +197,7 @@ export default function DirectoryContent({ tools }: DirectoryContentProps) {
                   resetVisible();
                 }}
               />
-            </div>
+            </form>
 
             {/* Desktop categories — scrolls between search and submit */}
             <div className="hidden lg:block lg:min-h-0 lg:flex-1 lg:overflow-y-auto lg:px-4 lg:py-4 [-ms-overflow-style:none] [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">

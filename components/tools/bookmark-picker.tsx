@@ -4,6 +4,7 @@ import { Button } from "@/components/ui/button";
 import { CollectionPopout } from "@/components/tools/collection-popout";
 import { Bookmark } from "lucide-react";
 import { signIn, useSession } from "next-auth/react";
+import posthog from "posthog-js";
 import { toast } from "sonner";
 import { useState } from "react";
 
@@ -14,6 +15,8 @@ type BookmarkChange = {
 
 type BookmarkPickerProps = {
   toolId: string;
+  toolTitle: string;
+  toolCategory: string;
   count: number;
   isSaved: boolean;
   // "picker" -> directory/home cards: click toggles save; "remove" -> dashboard cards: click only removes
@@ -27,6 +30,8 @@ type BookmarkPickerProps = {
 
 export function BookmarkPicker({
   toolId,
+  toolTitle,
+  toolCategory,
   count,
   isSaved,
   mode = "picker",
@@ -97,6 +102,12 @@ export function BookmarkPicker({
       });
 
       if (willSave) {
+        if (process.env.NEXT_PUBLIC_POSTHOG_KEY) {
+          posthog.capture("tool_saved", {
+            tool_title: toolTitle,
+            category: toolCategory,
+          });
+        }
         const toastId = toast.success("Saved", {
           duration: 4000,
           action: {

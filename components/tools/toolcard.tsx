@@ -3,7 +3,8 @@ import { getCategoryLabel } from "@/constants/categories";
 import { Tool } from "@/types/tool";
 import { ArrowUpRight } from "lucide-react";
 import Image from "next/image";
-import { useState } from "react";
+import posthog from "posthog-js";
+import { useState, type MouseEvent } from "react";
 import { BookmarkPicker } from "./bookmark-picker";
 
 interface ToolCardProps {
@@ -47,8 +48,25 @@ export default function ToolCard({
   const showCover =
     coverOk && typeof tool.image === "string" && tool.image.startsWith("http");
 
+  // One handler for logo / title / cover / arrow — all external links.
+  // Bookmark clicks are <button>s, so they never match.
+  function handleOutboundClick(e: MouseEvent<HTMLDivElement>) {
+    if (
+      process.env.NEXT_PUBLIC_POSTHOG_KEY &&
+      (e.target as HTMLElement).closest('a[target="_blank"]')
+    ) {
+      posthog.capture("tool_clicked", {
+        tool_title: tool.title,
+        category: tool.category,
+      });
+    }
+  }
+
   return (
-    <div className="group relative flex flex-col rounded-xl border border-gray-200 bg-gray-50 px-3 py-2.5 transition-all hover:border-gray-300 hover:shadow-sm dark:border-gray-800 dark:bg-neutral-900/80 dark:hover:border-gray-700 hover:scale-101">
+    <div
+      onClick={handleOutboundClick}
+      className="group relative flex flex-col rounded-xl border border-gray-200 bg-gray-50 px-3 py-2.5 transition-all hover:border-gray-300 hover:shadow-sm dark:border-gray-800 dark:bg-neutral-900/80 dark:hover:border-gray-700 hover:scale-101"
+    >
       {/* Header: logo + name on the left, actions on the right */}
       <div className="flex items-center gap-2.5">
         <a
@@ -103,6 +121,8 @@ export default function ToolCard({
         <div className="flex shrink-0 items-center gap-1">
           <BookmarkPicker
             toolId={tool._id}
+            toolTitle={tool.title}
+            toolCategory={tool.category}
             count={bookmarkCount}
             isSaved={bookmarkMode === "remove" ? true : isSaved}
             mode={bookmarkMode}

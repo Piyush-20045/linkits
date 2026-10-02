@@ -48,23 +48,24 @@ const PersonalCollections = ({
     (collection) => collection._id === selectedCollectionId,
   );
 
-  // Fetch the selected collection's tools by id. Collections can hold tools
-  // that are NOT in the default saved list, so filtering the saved-tools
-  // fetch here would silently hide them.
+  // Fetch the selected collection's tools from the caller's own data.
+  // Collections can hold tools that are NOT in the default saved list, so
+  // filtering the saved-tools fetch here would silently hide them.
   useEffect(() => {
     if (!selectedCollection) return;
 
-    const ids = selectedCollection.toolIds
-      .map((toolId) => String(toolId))
-      .join(",");
+    const collectionId = selectedCollection._id;
     let cancelled = false;
 
     async function loadTools() {
       setIsLoadingTools(true);
       try {
-        const res = await fetch(`/api/tools?ids=${ids}`, {
-          cache: "no-store",
-        });
+        const res = await fetch(
+          `/api/collection-tools?collectionId=${collectionId}`,
+          {
+            cache: "no-store",
+          },
+        );
         const data = await res.json();
 
         if (!cancelled && res.ok) {

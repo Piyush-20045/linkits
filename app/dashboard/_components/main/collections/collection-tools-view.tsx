@@ -39,9 +39,9 @@ export default function CollectionToolsView({
       </div>
 
       {/* Collections Name & Description */}
-      <div className="md:mx-6">
+      <div className="md:mx-3">
         <h2 className="text-2xl font-semibold">{collection.name}</h2>
-        <p className="mt-2 text-sm text-gray-500 dark:text-gray-400">
+        <p className="mt-2 mb-6 text-sm text-gray-500 dark:text-gray-400">
           {collection.description || ""}
         </p>
       </div>

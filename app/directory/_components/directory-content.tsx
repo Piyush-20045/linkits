@@ -3,13 +3,15 @@ import Navbar from "@/components/layout/navbar";
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
 import { Button } from "@/components/ui/button";
 import { useEffect, useMemo, useRef, useState } from "react";
-import { getCategoryLabel, normalizeCategoryValue } from "@/constants/categories";
+import { normalizeCategoryValue } from "@/constants/categories";
 import { Tool } from "@/types/tool";
 import Categories from "./categories";
 import { DirectorySearch } from "./directory-search";
-import { ActiveFilters, type ActiveFilter } from "./active-filters";
-import { FilterChips, type TypeFilter } from "./filter-chips";
-import { SortMenu, type SortKey } from "./sort-menu";
+import {
+  ResultsHeader,
+  type PlatformKey,
+  type SortKey,
+} from "./results-header";
 import { useSavedTools } from "./use-saved-tools";
 import ToolCard from "@/components/tools/toolcard";
 import { useSession } from "next-auth/react";
@@ -33,7 +35,7 @@ export default function DirectoryContent({ tools }: DirectoryContentProps) {
   const [visibleCount, setVisibleCount] = useState(PAGE_SIZE);
   const [sort, setSort] = useState<SortKey>("newest");
   const [noSignupOnly, setNoSignupOnly] = useState(false);
-  const [typeFilter, setTypeFilter] = useState<TypeFilter>("all");
+  const [platform, setPlatform] = useState<PlatformKey>("all");
   const sentinelRef = useRef<HTMLDivElement | null>(null);
   const resultsRef = useRef<HTMLDivElement | null>(null);
   const selectedCategory = normalizeCategoryValue(searchParams.get("category"));
@@ -63,18 +65,19 @@ export default function DirectoryContent({ tools }: DirectoryContentProps) {
         normalizeCategoryValue(tool.category) === selectedCategory;
 
       const matchesSignup = !noSignupOnly || tool.requiresSignup === "none";
-      const matchesType = typeFilter === "all" || tool.type === typeFilter;
+      const matchesPlatform =
+        platform === "all" || (tool.platforms ?? []).includes(platform);
 
-      return matchesSearch && matchesCategory && matchesSignup && matchesType;
+      return (
+        matchesSearch && matchesCategory && matchesSignup && matchesPlatform
+      );
     });
-  }, [toolsWithSavedState, search, selectedCategory, noSignupOnly, typeFilter]);
+  }, [toolsWithSavedState, search, selectedCategory, noSignupOnly, platform]);
 
   // Server already sends newest-first, so "newest" needs no re-sorting.
   const sortedTools = useMemo(() => {
     if (sort === "saved") {
-      return [...filteredTools].sort(
-        (a, b) => (b.saves ?? 0) - (a.saves ?? 0),
-      );
+      return [...filteredTools].sort((a, b) => (b.saves ?? 0) - (a.saves ?? 0));
     }
     if (sort === "az") {
       return [...filteredTools].sort((a, b) => a.title.localeCompare(b.title));
@@ -123,15 +126,15 @@ export default function DirectoryContent({ tools }: DirectoryContentProps) {
     resetVisible();
   }
 
-  function handleTypeChange(value: TypeFilter) {
-    setTypeFilter(value);
+  function handlePlatformChange(value: string) {
+    setPlatform(value as PlatformKey);
     resetVisible();
   }
 
   function handleClearFilters() {
     setSearch("");
     setNoSignupOnly(false);
-    setTypeFilter("all");
+    setPlatform("all");
     handleCategoryChange("all");
   }
 
@@ -148,40 +151,6 @@ export default function DirectoryContent({ tools }: DirectoryContentProps) {
     const queryString = nextSearchParams.toString();
     router.replace(queryString ? `${pathname}?${queryString}` : pathname, {
       scroll: false,
-    });
-  }
-
-  // Pills mirror the active filters; each clears just its own.
-  const activeFilters: ActiveFilter[] = [];
-  if (selectedCategory !== "all") {
-    activeFilters.push({
-      key: "category",
-      label: getCategoryLabel(selectedCategory),
-      onClear: () => handleCategoryChange("all"),
-    });
-  }
-  if (search.trim()) {
-    activeFilters.push({
-      key: "search",
-      label: `“${search.trim()}”`,
-      onClear: () => {
-        setSearch("");
-        resetVisible();
-      },
-    });
-  }
-  if (noSignupOnly) {
-    activeFilters.push({
-      key: "signup",
-      label: "No signup needed",
-      onClear: () => handleNoSignupChange(false),
-    });
-  }
-  if (typeFilter !== "all") {
-    activeFilters.push({
-      key: "type",
-      label: typeFilter === "tool" ? "Tools only" : "Resources only",
-      onClear: () => handleTypeChange("all"),
     });
   }
 
@@ -225,27 +194,25 @@ export default function DirectoryContent({ tools }: DirectoryContentProps) {
           <div className="min-w-0 flex-1">
             <h1 className="sr-only">Directory</h1>
 
-            <div className="mt-6 mb-12 lg:my-6 lg:px-6" ref={resultsRef}>
-              {/* Controls: sticky scroll row on mobile, plain row on desktop */}
-              <div className="sticky top-16 z-30 -mx-4 border-b border-gray-200 bg-white/95 px-4 py-2 backdrop-blur-md sm:-mx-6 sm:px-6 lg:static lg:z-auto lg:mx-0 lg:border-0 lg:bg-transparent lg:p-0 lg:backdrop-blur-none dark:border-neutral-800 dark:bg-black/95 dark:lg:bg-transparent">
-                <div className="flex items-center gap-2 overflow-x-auto [-ms-overflow-style:none] [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
-                  <FilterChips
-                    noSignupOnly={noSignupOnly}
-                    onNoSignupChange={handleNoSignupChange}
-                    typeFilter={typeFilter}
-                    onTypeChange={handleTypeChange}
-                  />
-                  <div className="ml-auto shrink-0">
-                    <SortMenu sort={sort} onChange={handleSortChange} />
-                  </div>
-                </div>
-              </div>
-              <div className="mt-4 flex items-center justify-between gap-3">
-                <p className="text-sm text-gray-500 dark:text-gray-400">
-                  Showing {visibleTools.length} of {filteredTools.length} results
-                </p>
-              </div>
-              <ActiveFilters filters={activeFilters} onClearAll={handleClearFilters} />
+            <div className="mt-3 mb-12 lg:my-4 lg:px-6" ref={resultsRef}>
+              <ResultsHeader
+                sort={sort}
+                onSortChange={handleSortChange}
+                noSignupOnly={noSignupOnly}
+                onNoSignupChange={handleNoSignupChange}
+                platform={platform}
+                onPlatformChange={handlePlatformChange}
+                selectedCategory={selectedCategory}
+                search={search}
+                visibleCount={visibleTools.length}
+                totalCount={filteredTools.length}
+                onClearCategory={() => handleCategoryChange("all")}
+                onClearSearch={() => {
+                  setSearch("");
+                  resetVisible();
+                }}
+                onClearAll={handleClearFilters}
+              />
 
               {/* Tools grid */}
               {filteredTools.length > 0 ? (
@@ -284,9 +251,7 @@ export default function DirectoryContent({ tools }: DirectoryContentProps) {
                   <p className="mb-4 text-gray-500 dark:text-gray-400">
                     Try adjusting your search or filters.
                   </p>
-                  <Button onClick={handleClearFilters}>
-                    Clear Filters
-                  </Button>
+                  <Button onClick={handleClearFilters}>Clear Filters</Button>
                 </div>
               )}
             </div>

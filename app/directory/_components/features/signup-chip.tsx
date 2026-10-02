@@ -1,6 +1,6 @@
 "use client";
 
-import { Check, CheckCheck, X, Zap } from "lucide-react";
+import { Check, X } from "lucide-react";
 
 export function NoSignupChip({
   active,

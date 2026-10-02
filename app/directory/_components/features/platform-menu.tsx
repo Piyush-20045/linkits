@@ -12,20 +12,22 @@ import {
 
 export type PlatformKey =
   | "all"
+  | "web"
+  | "windows"
+  | "mac"
   | "ios"
   | "android"
-  | "mac"
-  | "windows"
   | "linux"
   | "cli"
   | "browser-extension";
 
 export const PLATFORM_LABELS: Record<PlatformKey, string> = {
   all: "Platform",
+  web: "Web",
+  windows: "Windows",
+  mac: "macOS",
   ios: "iOS",
   android: "Android",
-  mac: "macOS",
-  windows: "Windows",
   linux: "Linux",
   cli: "CLI",
   "browser-extension": "Extension",

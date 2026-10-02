@@ -2,7 +2,7 @@
 import Navbar from "@/components/layout/navbar";
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
 import { Button } from "@/components/ui/button";
-import { useEffect, useMemo, useRef, useState } from "react";
+import { useMemo, useRef, useState } from "react";
 import { normalizeCategoryValue } from "@/constants/categories";
 import { Tool } from "@/types/tool";
 import Categories from "./categories";
@@ -21,9 +21,9 @@ interface DirectoryContentProps {
   tools: Tool[];
 }
 
-// Cards mounted at once. Small enough for instant theme switches and first
-// paint, large enough to fill tall screens — the rest loads on scroll.
-const PAGE_SIZE = 28;
+// Cards mounted at once. Deliberately small: every mounted card can fetch
+// its images, so the initial payload stays light on limited transfer.
+const PAGE_SIZE = 24;
 
 export default function DirectoryContent({ tools }: DirectoryContentProps) {
   const router = useRouter();
@@ -36,7 +36,6 @@ export default function DirectoryContent({ tools }: DirectoryContentProps) {
   const [sort, setSort] = useState<SortKey>("newest");
   const [noSignupOnly, setNoSignupOnly] = useState(false);
   const [platform, setPlatform] = useState<PlatformKey>("all");
-  const sentinelRef = useRef<HTMLDivElement | null>(null);
   const resultsRef = useRef<HTMLDivElement | null>(null);
   const selectedCategory = normalizeCategoryValue(searchParams.get("category"));
 
@@ -90,26 +89,6 @@ export default function DirectoryContent({ tools }: DirectoryContentProps) {
     [sortedTools, visibleCount],
   );
   const hasMore = visibleCount < sortedTools.length;
-
-  // Auto-load the next page when the sentinel scrolls into view.
-  useEffect(() => {
-    const sentinel = sentinelRef.current;
-    if (!sentinel || !hasMore) return;
-
-    const observer = new IntersectionObserver(
-      (entries) => {
-        if (entries[0].isIntersecting) {
-          setVisibleCount((count) =>
-            Math.min(count + PAGE_SIZE, sortedTools.length),
-          );
-        }
-      },
-      { rootMargin: "400px" },
-    );
-
-    observer.observe(sentinel);
-    return () => observer.disconnect();
-  }, [hasMore, sortedTools.length]);
 
   function resetVisible() {
     setVisibleCount(PAGE_SIZE);
@@ -223,12 +202,7 @@ export default function DirectoryContent({ tools }: DirectoryContentProps) {
                     ))}
                   </div>
                   {hasMore && (
-                    <div className="mt-8 flex flex-col items-center gap-4">
-                      <div
-                        ref={sentinelRef}
-                        className="h-1 w-1"
-                        aria-hidden="true"
-                      />
+                    <div className="mt-8 flex flex-col items-center">
                       <Button
                         variant="secondary"
                         onClick={() =>
@@ -237,7 +211,7 @@ export default function DirectoryContent({ tools }: DirectoryContentProps) {
                           )
                         }
                       >
-                        Load more ({sortedTools.length - visibleTools.length}{" "}
+                        Show more tools ({sortedTools.length - visibleTools.length}{" "}
                         remaining)
                       </Button>
                     </div>

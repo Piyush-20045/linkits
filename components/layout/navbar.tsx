@@ -2,8 +2,9 @@
 import Link from "next/link";
 import { Suspense, useEffect, useState } from "react";
 import { Button } from "../ui/button";
-import { Bookmark, ChevronDown, Menu, X } from "lucide-react";
+import { Bookmark, ChevronDown, Github, Menu, X } from "lucide-react";
 import { usePathname, useSearchParams } from "next/navigation";
+import { SOCIALS_LINKS } from "@/constants/footer-links";
 import {
   CATEGORIES,
   RESOURCE_CATEGORIES,
@@ -174,6 +175,15 @@ const Navbar = () => {
                 ))}
               </div>
             </div>
+            <a
+              href="https://github.com/Piyush-20045/linkits"
+              target="_blank"
+              rel="noopener noreferrer"
+              aria-label="GitHub repository"
+              className="text-gray-500 transition-colors hover:text-gray-900 dark:text-gray-400 dark:hover:text-white"
+            >
+              <Github size={18} />
+            </a>
           </div>
         </div>
 
@@ -238,6 +248,21 @@ const Navbar = () => {
             onNavigate={() => setIsMenuOpen(false)}
           />
         </Suspense>
+        <div className="flex items-center gap-1 border-t border-neutral-400 py-3 dark:border-neutral-600">
+          {SOCIALS_LINKS.map((social) => (
+            <a
+              key={social.id}
+              href={social.href}
+              target={social.href.startsWith("http") ? "_blank" : undefined}
+              rel="noopener noreferrer"
+              aria-label={social.name}
+              onClick={() => setIsMenuOpen(false)}
+              className="flex h-9 w-9 items-center justify-center rounded-md text-gray-500 transition-colors hover:bg-gray-100 hover:text-gray-900 dark:text-gray-400 dark:hover:bg-neutral-800 dark:hover:text-white"
+            >
+              {social.icon}
+            </a>
+          ))}
+        </div>
       </div>
     </nav>
   );

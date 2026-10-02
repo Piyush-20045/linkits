@@ -4,7 +4,7 @@ import { ButtonGroup } from "@/components/ui/button-group";
 const ToolsFilter = ({ isSelected, setIsSelected }: any) => {
   return (
     <section className="flex py-4 mt-10 border-y-2">
-      <ButtonGroup className="overflow-x-scroll sm:overflow-x-hidden">
+      <ButtonGroup className="max-w-full overflow-x-auto [-ms-overflow-style:none] [scrollbar-width:none] sm:overflow-x-hidden [&::-webkit-scrollbar]:hidden">
         <Button
           onClick={() => setIsSelected("tools")}
           variant="secondary"

@@ -49,7 +49,7 @@ export default function DashboardHeader({
         {status === "authenticated" ? (
           <div className="flex flex-col gap-5 sm:justify-between">
             <div className="flex items-center gap-4">
-              <Avatar className="h-16 w-16 border border-gray-200 dark:border-gray-800">
+              <Avatar className="sm:h-16 sm:w-16 h-12 w-12 border border-gray-200 dark:border-gray-800">
                 <AvatarImage src={user?.image || ""} alt={userName} />
                 <AvatarFallback>{initials}</AvatarFallback>
               </Avatar>

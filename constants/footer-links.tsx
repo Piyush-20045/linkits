@@ -17,7 +17,7 @@ export const SOCIALS_LINKS = [
     id: 3,
     name: "GITHUB",
     icon: <Github size={14} />,
-    href: "https://github.com/Piyush-20045/",
+    href: "https://github.com/Piyush-20045/linkits",
   },
 ];
 

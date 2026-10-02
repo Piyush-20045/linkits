@@ -65,7 +65,7 @@ export default function ToolCard({
   return (
     <div
       onClick={handleOutboundClick}
-      className="group relative flex flex-col rounded-xl border border-gray-200 bg-gray-50 px-3 py-2.5 transition-all hover:border-gray-300 hover:shadow-sm dark:border-gray-800 dark:bg-neutral-900/80 dark:hover:border-gray-700 hover:scale-101"
+      className="group relative flex min-w-0 flex-col rounded-xl border border-gray-200 bg-gray-50 px-3 py-2.5 transition-all hover:border-gray-300 hover:shadow-sm dark:border-gray-800 dark:bg-neutral-900/80 dark:hover:border-gray-700 hover:scale-101"
     >
       {/* Header: logo + name on the left, actions on the right */}
       <div className="flex items-center gap-2.5">
@@ -102,8 +102,8 @@ export default function ToolCard({
           >
             {tool.title}
           </a>
-          <div className="mt-0.5 flex items-center gap-2 text-xs text-gray-500 dark:text-gray-400">
-            <span className="truncate">{categoryLabel}</span>
+          <div className="mt-0.5 flex min-w-0 items-center gap-2 text-xs text-gray-500 dark:text-gray-400">
+            <span className="min-w-0 truncate">{categoryLabel}</span>
             {tool.source === "community" ? (
               <>
                 <span

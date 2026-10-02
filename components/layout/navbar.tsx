@@ -146,23 +146,30 @@ const Navbar = () => {
           <div className="hidden md:flex md:items-center md:gap-6">
             <Link
               href="/directory"
-              className={`text-sm font-medium transition-colors ${isActive ? "text-black dark:text-white" : "text-gray-500 hover:text-black dark:text-gray-400 dark:hover:text-white"}`}
+              className={
+                "text-sm font-medium transition-colors text-gray-500 hover:text-black dark:text-gray-400 dark:hover:text-white"
+              }
             >
               Directory
             </Link>
             <div className="relative group">
-              <button className="text-sm font-medium text-gray-500 group-hover:text-gray-900 dark:group-hover:text-white flex items-center gap-0.5">
+              <button className="text-sm font-medium text-gray-500 dark:text-gray-400 group-hover:text-gray-900 dark:group-hover:text-white flex items-center gap-0.5">
                 Categories
                 <ChevronDown size={18} className="opacity-50" />
               </button>
-              <div className="absolute left-0 top-full mt-2 w-48 origin-top-left rounded-lg border border-gray-200 bg-white p-2 shadow-lg opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200 dark:border-neutral-800 dark:bg-neutral-950 max-h-96 overflow-y-auto [scrollbar-width:1px]">
+              <div className="absolute left-0 top-full mt-2 w-56 origin-top-left rounded-lg border border-gray-200 bg-white p-2 shadow-lg opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200 dark:border-neutral-800 dark:bg-neutral-950 max-h-96 overflow-y-auto [scrollbar-width:1px]">
                 {CATEGORIES.map((cat) => (
                   <Link
                     key={cat.value}
                     href={`/directory?category=${cat.value}`}
-                    className="block rounded-md px-3 py-2 text-sm text-gray-700 hover:bg-gray-100 dark:text-gray-300 dark:hover:bg-neutral-900"
+                    className="flex items-center gap-2.5 rounded-md px-3 py-2 text-sm text-gray-700 hover:bg-gray-100 dark:text-gray-300 dark:hover:bg-neutral-900"
                   >
-                    {cat.label}
+                    <CategoryIcon
+                      value={cat.value}
+                      size={15}
+                      className="shrink-0 opacity-70"
+                    />
+                    <span className="truncate">{cat.label}</span>
                   </Link>
                 ))}
               </div>

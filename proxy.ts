@@ -13,8 +13,13 @@ export async function proxy(req: NextRequest) {
   }
 
   if (pathname.startsWith("/login") && token) {
-    // Redirect them to the home page
-    return NextResponse.redirect(new URL("/", req.url));
+    // Logged-in users don't need the login page — straight to the tools
+    return NextResponse.redirect(new URL("/directory", req.url));
+  }
+
+  if (pathname === "/" && token) {
+    // Logged-in users skip the landing page and land on point
+    return NextResponse.redirect(new URL("/directory", req.url));
   }
 
   // Allow the request to continue if no rules were triggered

@@ -17,7 +17,7 @@ function rowClassName(isSelected: boolean) {
   return `flex w-full items-center gap-2.5 rounded-lg px-3 py-2 text-sm transition-colors duration-150 ease-out active:scale-[0.98] ${
     isSelected
       ? "bg-blue-50 font-medium text-blue-700 dark:bg-blue-500/10 dark:text-blue-300"
-      : "text-gray-600 hover:bg-gray-100 dark:text-gray-400 dark:hover:bg-neutral-800 dark:hover:text-gray-200"
+      : "text-gray-600 hover:bg-gray-100 dark:text-gray-300/90 dark:hover:bg-neutral-800 dark:hover:text-gray-200"
   }`;
 }
 

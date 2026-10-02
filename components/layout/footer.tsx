@@ -43,7 +43,15 @@ const Footer = () => {
         </div>
       </div>
       <div className="pt-6 md:pt-0 pb-2 text-[11px] font-geist-mono text-neutral-400 text-center tracking-widest">
-        &copy; {new Date().getFullYear()} ALL RIGHTS RESERVED.
+        &copy; {new Date().getFullYear()} ALL RIGHTS RESERVED · CREATED BY{" "}
+        <a
+          href="https://x.com/Piyush9436"
+          target="_blank"
+          rel="noopener noreferrer"
+          className="underline underline-offset-2 transition-colors hover:text-neutral-900 dark:hover:text-neutral-100"
+        >
+          PIYUSH YADAV
+        </a>
       </div>
     </footer>
   );

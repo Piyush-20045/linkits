@@ -1,5 +1,6 @@
 import Link from "next/link";
 import { Button } from "../ui/button";
+import { SocialProof } from "../ui/social-proof";
 import ParticlesBackground from "@/components/ui/ParticlesBackground";
 
 const Hero = () => {
@@ -7,6 +8,7 @@ const Hero = () => {
     <section className="pt-20 pb-16 md:pt-32 md:pb-24 relative overflow-hidden">
       <ParticlesBackground />
       <div className="mx-auto max-w-3xl text-center space-y-6 relative z-10">
+        <SocialProof />
         {/* Heading and paragraph */}
         <h1 className="px-2.5 text-5xl sm:text-6xl md:text-7xl text-gray-700 dark:text-gray-400 leading-tight tracking-tight font-instrument">
           Discover the best tools to{" "}
@@ -29,12 +31,11 @@ const Hero = () => {
               <span>Explore Tools</span>
             </Button>
           </Link>
-          <Link href="/directory?category=ai" className="w-full sm:w-auto">
-            <Button
-              asChild
-              size="lg"
-              className="w-full px-8 cursor-pointer"
-            >
+          <Link
+            href="/directory?category=ai-tools"
+            className="w-full sm:w-auto"
+          >
+            <Button asChild size="lg" className="w-full px-8 cursor-pointer">
               <span>Browse AI</span>
             </Button>
           </Link>

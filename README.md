@@ -1,39 +1,40 @@
-# Linkits – A Curated Developer Resources Platform
+# Linkits – A Curated Developer Tools Directory
 
-Linkits is a full-stack web application where developers can discover useful tools, job platforms, interview preparation resources, AI tools, and free learning platforms in one place.
+Linkits is a full-stack directory where developers can discover 600+ tools, AI tools, and design resources — filterable by category, platform, and signup requirement, with personal bookmark collections.
 
-### Live Demo: [linkits](https://linkits.piyushh.tech/)
+### Live Demo: [linkits.site](https://linkits.site)
 
 ---
 
 ## Preview
 
-![Linkits Preview](https://res.cloudinary.com/dhhhr2skx/image/upload/v1777062535/Screenshot_from_2026-04-25_01-58-10_sv6y3k.png)
+![Linkits Preview](https://res.cloudinary.com/dhhhr2skx/image/upload/v1791132809/directory-page_kc4ogh.png)
 
 ---
 
 ## Features
 
-- Categorized directory of useful developer resources
-- Google OAuth authentication using NextAuth
-- Bookmark tools and access them from personal dashboard
-- Trending tools section based on user saves
-- Search and category filtering
-- Responsive modern UI with dark mode support
-- Animated homepage hero section using tsParticles
+- 600+ tools across 27 categories (tools + resources), with per-category counts
+- Search, sort (newest / most saved / A–Z), and quick filters: no-signup tools, platform (iOS, Android, macOS, Windows, Linux, CLI…), content type
+- Google OAuth (NextAuth); bookmark tools into personal collections from the dashboard
+- Tool suggestions via a 3-field form → Telegram notification for manual review (nothing writes to the DB unreviewed)
+- ISR-cached directory (5 min), lazy-loaded images, manual "show more" loading to stay light on bandwidth
+- PostHog analytics (pageviews + explicit tool click/save/search events only)
+- Responsive UI with dark mode
 
 ---
 
 ## Tech Stack
 
 ### Frontend
-- Next.js
+- Next.js (App Router)
 - React
 - TypeScript
 - Tailwind CSS
 - Next Themes
 - tsParticles
 - Sonner
+- posthog-js
 
 ### Backend
 - Next.js App Router APIs
@@ -41,6 +42,7 @@ Linkits is a full-stack web application where developers can discover useful too
 - Mongoose
 - NextAuth
 - MongoDB Adapter
+- Telegram Bot API (suggestion notifications)
 
 ---
 
@@ -69,15 +71,20 @@ npm install
 ```
 MONGODB_URI=your_mongodb_connection_string
 
-NEXTAUTH_URL=https://linkits.piyushh.tech/
+NEXTAUTH_URL=https://linkits.site
 NEXTAUTH_SECRET=your_random_secret_key
 
 GOOGLE_CLIENT_ID=your_google_client_id
 GOOGLE_CLIENT_SECRET=your_google_client_secret
 
 NEXT_PUBLIC_LOGO_DEV_KEY=your_logo_dev_public_key
-NEXT_PUBLIC_APP_URL=add_the_live_url_of_the_project
+NEXT_PUBLIC_APP_URL=https://linkits.site
 
+TELEGRAM_BOT_TOKEN=your_telegram_bot_token
+TELEGRAM_CHAT_ID=your_telegram_chat_id
+
+NEXT_PUBLIC_POSTHOG_KEY=your_posthog_project_api_key
+NEXT_PUBLIC_POSTHOG_HOST=https://us.i.posthog.com
 ```
 
 #### 4. Run the project
@@ -108,11 +115,12 @@ linkits/
 
 ## What I Learned
 - Implemented Google OAuth authentication using NextAuth
-- Understood the difference between Mongoose and MongoDB Adapter
-- Built secure API routes using Next.js App Router
-- Integrated MongoDB for storing tools and user data
-- Implemented bookmark system with user dashboard
-- Improved UI/UX with reusable components and responsive design
+- When to use the raw MongoDB driver vs. Mongoose in the same app (adapter/auth queries vs. modeled domain data)
+- ISR + edge caching strategy: what to cache (public pages, 5-min revalidation), what to never cache (personal saved-tools data), and why caching can't fix render cost - only fewer mounted DOM nodes can
+- Image delivery economics: why proxying hundreds of external images through Vercel Image Optimization burns quota, and when `unoptimized` + browser/CDN caching is the right call
+- Improving API design to reduce bulk scraping while accepting that publicly displayed data can't be completely protected.
+- PostHog Analytics to track useful actions like clicks, saves, and searches instead of collecting everything by default
+- Keeping a growing client page manageable by extracting hooks and presentational modules into separate files
 
 ---
 

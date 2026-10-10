@@ -1,28 +1,20 @@
 import { DashboardEmptyState } from "../dashboard-empty-state";
-import { ArrowRightIcon, Folders } from "lucide-react";
-import { Tool } from "@/types/tool";
+import { ArrowRightIcon, Rocket } from "lucide-react";
 
-const SavedCollections = ({ tools }: { tools: Tool[] }) => {
+// Saved (pre-made, curated) collections aren't built yet — show a
+// coming-soon card instead of an empty state.
+const SavedCollections = () => {
   return (
-    <div>
-      {tools.length !== 0 ? (
-        // if 0 collections are there
-        <DashboardEmptyState
-          icon={Folders}
-          heading="No collections saved yet"
-          description="Save curated pre-made collections for different specific tasks."
-          primaryBtn={{
-            href: "/directory",
-            label: "Browse collections",
-            icon: <ArrowRightIcon />,
-          }}
-        />
-      ) : (
-        <div className="p-6 mt-12 text-center border">
-          THIS FEATURE IS YET TO ARRIVE!!
-        </div>
-      )}
-    </div>
+    <DashboardEmptyState
+      icon={Rocket}
+      heading="Curated collections are coming soon"
+      description="Hand-picked tool collections for specific tasks and workflows. We're putting them together — check back soon."
+      primaryBtn={{
+        href: "/directory",
+        label: "Browse tools",
+        icon: <ArrowRightIcon />,
+      }}
+    />
   );
 };
 

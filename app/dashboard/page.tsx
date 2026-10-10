@@ -164,7 +164,7 @@ export default function Dashboard() {
             />
           ) : (
             // 3. SAVED COLLECTIONS
-            <SavedCollections tools={tools} />
+            <SavedCollections />
           )}
         </div>
       </main>

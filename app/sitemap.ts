@@ -3,7 +3,8 @@ import { MetadataRoute } from "next";
 const siteUrl = process.env.NEXT_PUBLIC_APP_URL || "http://localhost:3000";
 
 export default function sitemap(): MetadataRoute.Sitemap {
-  const routes = ["", "/directory", "/login"].map((route) => ({
+  // Only indexable public pages (/login is robots-disallowed on purpose)
+  const routes = ["", "/directory", "/privacy-and-terms"].map((route) => ({
     url: `${siteUrl}${route}`,
     lastModified: new Date(),
     changeFrequency: "weekly" as const,

@@ -72,12 +72,16 @@ export const metadata: Metadata = {
       "Discover, save, and organize the best developer tools, resources, and platforms.",
     images: [`${siteUrl}/og-image.png`],
   },
-  icons: {
-    icon: "/favicon.ico",
-  },
   verification: {
     google: "jNxotQjuTrJu7NBPzncRXBrOMu2eXioSpqbi-69JGIk",
   },
+};
+
+export const viewport = {
+  themeColor: [
+    { media: "(prefers-color-scheme: light)", color: "#ffffff" },
+    { media: "(prefers-color-scheme: dark)", color: "#000000" },
+  ],
 };
 
 export default function RootLayout({
